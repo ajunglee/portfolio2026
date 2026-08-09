@@ -1,0 +1,245 @@
+import React, { useCallback, useState, useEffect, useRef } from 'react';
+
+import AboutLayerPopup from './AboutLayerPopup';
+import { VideoCanvasDigger } from './VideoCanvasDigger';
+import ViewportReveal from './ViewportReveal';
+
+const DIGGER_TITLE = "I'm a Digger.";
+const DIGGER_DESCRIPTION = 'Beneath every problem, there is something worth finding.';
+
+export const DiggerSection: React.FC = () => {
+  const sectionRef = useRef<HTMLDivElement | null>(null);
+  const [isAboutPopupOpen, setIsAboutPopupOpen] = useState(false);
+  const openAboutPopup = useCallback(() => setIsAboutPopupOpen(true), []);
+  const closeAboutPopup = useCallback(() => setIsAboutPopupOpen(false), []);
+
+  // Typing state
+  const [hasTriggered, setHasTriggered] = useState(false);
+  const [titleText, setTitleText] = useState('');
+  const [descText, setDescText] = useState('');
+  const [showCursor, setShowCursor] = useState(false);
+  const [showCta, setShowCta] = useState(false);
+  const [showBackground, setShowBackground] = useState(false);
+
+  // Mouse Parallax state
+  const [mousePos, setMousePos] = useState({ x: 0, y: 0 });
+  const targetPos = useRef({ x: 0, y: 0 });
+  const animFrameRef = useRef<number | null>(null);
+  const [isTouchDevice, setIsTouchDevice] = useState(false);
+  const [isMobileViewport, setIsMobileViewport] = useState(false);
+  const [prefersReducedMotion, setPrefersReducedMotion] = useState(false);
+
+  useEffect(() => {
+    if ('ontouchstart' in window || navigator.maxTouchPoints > 0) {
+      setIsTouchDevice(true);
+    }
+
+    const mobileQuery = window.matchMedia('(max-width: 767px)');
+    const reducedMotionQuery = window.matchMedia('(prefers-reduced-motion: reduce)');
+
+    const syncPreferences = () => {
+      setIsMobileViewport(mobileQuery.matches);
+      setPrefersReducedMotion(reducedMotionQuery.matches);
+    };
+
+    syncPreferences();
+    mobileQuery.addEventListener('change', syncPreferences);
+    reducedMotionQuery.addEventListener('change', syncPreferences);
+
+    return () => {
+      mobileQuery.removeEventListener('change', syncPreferences);
+      reducedMotionQuery.removeEventListener('change', syncPreferences);
+    };
+  }, []);
+
+  // IntersectionObserver to trigger typing ONCE
+  useEffect(() => {
+    if (hasTriggered) return;
+
+    const observer = new IntersectionObserver(
+      (entries) => {
+        if (entries[0].isIntersecting && !hasTriggered) {
+          setHasTriggered(true);
+          observer.disconnect();
+        }
+      },
+      { threshold: 0, rootMargin: '-25% 0px -25% 0px' }
+    );
+
+    if (sectionRef.current) {
+      observer.observe(sectionRef.current);
+    }
+
+    return () => observer.disconnect();
+  }, [hasTriggered]);
+
+  // Execute Typing Sequence
+  useEffect(() => {
+    if (!hasTriggered) return;
+
+    let titleIdx = 0;
+    let descIdx = 0;
+    setShowCursor(true);
+
+    // Step 1: Type Title
+    const titleInterval = setInterval(() => {
+      if (titleIdx < DIGGER_TITLE.length) {
+        setTitleText(DIGGER_TITLE.slice(0, titleIdx + 1));
+        titleIdx++;
+      } else {
+        clearInterval(titleInterval);
+        setShowBackground(true);
+
+        // Step 2: Pause 400ms
+        setTimeout(() => {
+          // Step 3: Fade the title cursor while typing the description
+          setShowCursor(false);
+          const descInterval = setInterval(() => {
+            if (descIdx < DIGGER_DESCRIPTION.length) {
+              setDescText(DIGGER_DESCRIPTION.slice(0, descIdx + 1));
+              descIdx++;
+            } else {
+              clearInterval(descInterval);
+
+              // Step 4: Show CTA Button
+              setTimeout(() => {
+                setShowCta(true);
+              }, 600);
+            }
+          }, 38); // 30–45ms per char
+        }, 400); // 300–500ms pause
+      }
+    }, 90); // 80–100ms per char
+
+    return () => clearInterval(titleInterval);
+  }, [hasTriggered]);
+
+  // Parallax Smoothing
+  useEffect(() => {
+    if (isTouchDevice || prefersReducedMotion) return;
+
+    const handleMouseMove = (e: MouseEvent) => {
+      const centerX = window.innerWidth / 2;
+      const centerY = window.innerHeight / 2;
+      const normX = (e.clientX - centerX) / centerX;
+      const normY = (e.clientY - centerY) / centerY;
+      targetPos.current = { x: normX, y: normY };
+    };
+
+    const updateParallax = () => {
+      setMousePos((prev) => ({
+        x: prev.x + (targetPos.current.x - prev.x) * 0.08,
+        y: prev.y + (targetPos.current.y - prev.y) * 0.08
+      }));
+      animFrameRef.current = requestAnimationFrame(updateParallax);
+    };
+
+    window.addEventListener('mousemove', handleMouseMove);
+    animFrameRef.current = requestAnimationFrame(updateParallax);
+
+    return () => {
+      window.removeEventListener('mousemove', handleMouseMove);
+      if (animFrameRef.current) cancelAnimationFrame(animFrameRef.current);
+    };
+  }, [isTouchDevice, prefersReducedMotion]);
+
+  const revealDistance = isMobileViewport ? 14 : 32;
+  const revealDuration = prefersReducedMotion ? '0ms' : '700ms';
+  const mouseX = !isTouchDevice && !prefersReducedMotion ? mousePos.x : 0;
+  const mouseY = !isTouchDevice && !prefersReducedMotion ? mousePos.y : 0;
+
+  return (
+    <>
+      <section
+        id="digger"
+        className="relative mt-24 w-full overflow-x-clip bg-black md:mt-36 lg:mt-48 lg:h-[220svh] xl:mt-56 motion-reduce:lg:h-auto"
+      >
+        <div className="relative flex min-h-[100svh] w-full flex-col items-center justify-center overflow-hidden bg-black py-48 md:min-h-[120svh] md:py-72 lg:sticky lg:top-0 lg:h-[100svh] lg:min-h-0 lg:py-0 motion-reduce:lg:static motion-reduce:lg:h-auto motion-reduce:lg:min-h-[120svh] motion-reduce:lg:py-96">
+        {/* Background Person Video / Canvas with Parallax */}
+        <div
+          className={`absolute inset-0 transition-[opacity,filter] duration-[1800ms] ease-out motion-reduce:transition-none ${
+            showBackground ? 'opacity-100 blur-0' : 'opacity-0 blur-md'
+          }`}
+          style={{
+            transform: `translate3d(${mouseX * 10}px, ${mouseY * 7}px, 0)`,
+            willChange: prefersReducedMotion ? 'auto' : 'transform, opacity, filter'
+          }}
+        >
+          <VideoCanvasDigger />
+        </div>
+
+        <div className="portfolio-grid relative z-10 w-full">
+          {/* Typing Text Area with Parallax */}
+          <ViewportReveal
+            className="col-span-full xl:col-start-4 xl:col-span-6 max-w-3xl xl:max-w-none mx-auto w-full"
+            distance={{ mobile: 70, desktop: 130 }}
+            progressOffset={[0.04, 0.88]}
+            viewportOffset={['start 100%', 'start 42%']}
+          >
+            <div
+              ref={sectionRef}
+              className="relative w-full text-center flex flex-col items-center px-4"
+              style={{
+                transform: `translate3d(${mouseX * 2}px, ${mouseY}px, 0)`,
+                willChange: prefersReducedMotion ? 'auto' : 'transform'
+              }}
+            >
+              {/* Step 1 Title */}
+              <h2
+                className="text-4xl sm:text-6xl md:text-7xl lg:text-[100pt] lg:whitespace-nowrap font-serif-display font-medium tracking-tight text-white mb-6 min-h-[1.2em] flex items-center justify-center"
+                style={{
+                  opacity: hasTriggered ? 1 : 0,
+                  transform: hasTriggered ? 'translateY(0)' : `translateY(${revealDistance}px)`,
+                  transition: `opacity ${revealDuration} ease-out, transform ${revealDuration} cubic-bezier(0.22, 1, 0.36, 1)`
+                }}
+              >
+                <span>{titleText}</span>
+                <span
+                  aria-hidden="true"
+                  className={`inline-block ml-2 h-[0.72em] w-[2px] shrink-0 bg-white transition-opacity duration-300 ease-out ${
+                    showCursor ? 'opacity-100 animate-pulse' : 'opacity-0'
+                  }`}
+                />
+              </h2>
+
+              {/* Step 3 Description */}
+              <p
+                className="text-lg sm:text-2xl font-serif-display text-neutral-300 tracking-wide font-light max-w-2xl lg:max-w-none lg:whitespace-nowrap min-h-[2.5em] leading-relaxed"
+                style={{
+                  opacity: descText.length > 0 ? 1 : 0,
+                  transform: descText.length > 0 ? 'translateY(0)' : `translateY(${revealDistance * 0.65}px)`,
+                  transition: `opacity ${revealDuration} ease-out, transform ${revealDuration} cubic-bezier(0.22, 1, 0.36, 1)`
+                }}
+              >
+                {descText}
+              </p>
+
+              {/* Step 4 CTA Button */}
+              <div
+                className="mt-10 transition-all duration-700 ease-out"
+                style={{
+                  opacity: showCta ? 1 : 0,
+                  transform: showCta ? 'translateY(0)' : 'translateY(8px)',
+                  pointerEvents: showCta ? 'auto' : 'none',
+                  transitionDuration: prefersReducedMotion ? '0ms' : undefined
+                }}
+              >
+                <button
+                  type="button"
+                  aria-haspopup="dialog"
+                  aria-expanded={isAboutPopupOpen}
+                  onClick={openAboutPopup}
+                  className="px-7 py-2.5 text-xs font-semibold uppercase tracking-[0.2em] rounded-full border border-neutral-700 bg-neutral-900/80 hover:bg-[#7B00FF] text-white hover:border-[#A855F7] transition-all duration-300 backdrop-blur-sm transform hover:scale-105 active:scale-95 shadow-xl shadow-black/50"
+                >
+                  Take a closer look
+                </button>
+              </div>
+            </div>
+          </ViewportReveal>
+        </div>
+        </div>
+      </section>
+      <AboutLayerPopup isOpen={isAboutPopupOpen} onClose={closeAboutPopup} />
+    </>
+  );
+};

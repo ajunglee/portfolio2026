@@ -1,0 +1,6 @@
+{
+  "name": "DIG DEEPER Portfolio",
+  "description": "An interactive editorial dark portfolio featuring smooth motion specifications, video hero, typing effect, carousel, collage animation, and visual archive.",
+  "requestFramePermissions": [],
+  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+}
