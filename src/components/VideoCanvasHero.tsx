@@ -317,8 +317,24 @@ export const VideoCanvasHero: React.FC<VideoCanvasHeroProps> = ({ videoUrl = HER
           aria-hidden="true"
         />
       )}
+      {/* Feather the scaled video's side edges into the page background. */}
+      <div
+        className="absolute inset-0"
+        aria-hidden="true"
+        style={{
+          background:
+            'linear-gradient(to right, #000 0%, rgba(0,0,0,0.72) 3%, transparent 13%, transparent 87%, rgba(0,0,0,0.72) 97%, #000 100%)'
+        }}
+      />
       {/* Top & Bottom Vignette Overlays for smooth background blending */}
-      <div className="absolute inset-0 bg-gradient-to-b from-black/60 via-transparent to-black" />
+      <div
+        className="absolute inset-0"
+        aria-hidden="true"
+        style={{
+          background:
+            'linear-gradient(to bottom, #000 0%, rgba(0,0,0,0.72) 4%, transparent 16%, transparent 82%, rgba(0,0,0,0.72) 95%, #000 100%)'
+        }}
+      />
     </div>
   );
 };

@@ -11,23 +11,28 @@ interface FeaturedSectionProps {
 }
 
 export const FeaturedSection: React.FC<FeaturedSectionProps> = ({ onSelectProject }) => {
-  // Active index (0: BX, 1: UI/UX, 2: Promotion)
+  // Active index (0: BX, 1: Motion, 2: Promotion)
   const [activeIndex, setActiveIndex] = useState(1);
   const [hasEntered, setHasEntered] = useState(false);
+  const [isCarouselHovered, setIsCarouselHovered] = useState(false);
   const sectionRef = useRef<HTMLElement | null>(null);
   const videoRef = useRef<HTMLVideoElement | null>(null);
 
   const total = FEATURED_PROJECTS.length;
 
   useEffect(() => {
-    if (!hasEntered || window.matchMedia('(prefers-reduced-motion: reduce)').matches) return;
+    if (
+      !hasEntered ||
+      isCarouselHovered ||
+      window.matchMedia('(prefers-reduced-motion: reduce)').matches
+    ) return;
 
     const autoplayId = window.setInterval(() => {
       setActiveIndex((currentIndex) => (currentIndex + 1) % total);
     }, 4000);
 
     return () => window.clearInterval(autoplayId);
-  }, [hasEntered, total]);
+  }, [hasEntered, isCarouselHovered, total]);
 
   useEffect(() => {
     if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) {
@@ -122,12 +127,22 @@ export const FeaturedSection: React.FC<FeaturedSectionProps> = ({ onSelectProjec
         >
         
         {/* Sliding Cards Track */}
-        <div className="relative w-full max-w-[1050px] h-[440px] sm:h-[520px] md:h-[600px] flex items-center justify-center">
+        <div
+          className="relative w-full max-w-[1050px] h-[440px] sm:h-[520px] md:h-[600px] flex items-center justify-center"
+          onPointerEnter={(event) => {
+            if (event.pointerType === 'mouse') setIsCarouselHovered(true);
+          }}
+          onPointerLeave={(event) => {
+            if (event.pointerType === 'mouse') setIsCarouselHovered(false);
+          }}
+        >
           {FEATURED_PROJECTS.map((project, index) => {
             const offset = getOffset(index);
             const isCenter = offset === 0;
             const isLeft = offset === -1;
             const isRight = offset === 1;
+            const previewImage = project.previewImage ?? project.images[0];
+            const hasHoverImage = Boolean(project.hoverImage);
 
             // Calculate horizontal transform percentage & styling
             let translateX = '0%';
@@ -161,6 +176,13 @@ export const FeaturedSection: React.FC<FeaturedSectionProps> = ({ onSelectProjec
             return (
               <div
                 key={project.id}
+                role="button"
+                tabIndex={0}
+                aria-label={
+                  isCenter
+                    ? `Open ${project.title} project details`
+                    : `Show ${project.title} project`
+                }
                 onClick={() => {
                   if (isCenter) {
                     onSelectProject(project);
@@ -168,7 +190,19 @@ export const FeaturedSection: React.FC<FeaturedSectionProps> = ({ onSelectProjec
                     setActiveIndex(index);
                   }
                 }}
-                className="absolute w-[86vw] sm:w-[58vw] max-w-[520px] h-[420px] sm:h-[500px] md:h-[580px] rounded-2xl cursor-pointer flex flex-col justify-end p-6 sm:p-8 overflow-hidden"
+                onKeyDown={(event) => {
+                  if (event.key !== 'Enter' && event.key !== ' ') return;
+
+                  event.preventDefault();
+                  if (isCenter) {
+                    onSelectProject(project);
+                  } else {
+                    setActiveIndex(index);
+                  }
+                }}
+                className={`featured-project-card absolute w-[86vw] sm:w-[58vw] max-w-[520px] h-[420px] sm:h-[500px] md:h-[580px] rounded-2xl cursor-pointer flex flex-col justify-end p-6 sm:p-8 overflow-hidden focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-white/80 ${
+                  hasHoverImage ? 'featured-project-card--image-swap' : ''
+                }`}
                 style={{
                   transform: `translateX(${translateX}) scale(${scale}) rotateY(${rotateY})`,
                   opacity,
@@ -176,33 +210,37 @@ export const FeaturedSection: React.FC<FeaturedSectionProps> = ({ onSelectProjec
                   filter,
                   transition: 'transform 650ms cubic-bezier(0.22, 1, 0.36, 1), opacity 500ms ease, filter 500ms ease, border-color 400ms ease, box-shadow 400ms ease',
                   backgroundColor: '#121212',
-                  border: isCenter ? '1px solid rgba(123, 0, 255, 0.5)' : '1px solid rgba(255, 255, 255, 0.1)',
+                  border: '1px solid rgba(255, 255, 255, 0.1)',
                   boxShadow: isCenter
-                    ? '0 25px 60px rgba(0, 0, 0, 0.9), 0 0 30px rgba(123, 0, 255, 0.22)'
+                    ? '0 25px 60px rgba(0, 0, 0, 0.9)'
                     : '0 15px 35px rgba(0, 0, 0, 0.7)'
                 }}
               >
                 {/* Image Background */}
                 <div className="absolute inset-0 rounded-2xl overflow-hidden">
                   <div className={`w-full h-full ${project.previewBg} flex items-center justify-center relative`}>
+                    {project.hoverImage && (
+                      <img
+                        src={project.hoverImage}
+                        alt=""
+                        aria-hidden="true"
+                        className="featured-project-image featured-project-image--behind absolute inset-0 h-full w-full object-cover"
+                      />
+                    )}
                     <img
-                      src={project.images[0]}
+                      src={previewImage}
                       alt={project.title}
-                      className={`w-full h-full object-cover opacity-100 transition-transform duration-700 ease-out ${
+                      className={`featured-project-image featured-project-image--front absolute inset-0 h-full w-full object-cover ${
                         isCenter ? 'scale-100 hover:scale-105' : 'scale-100'
                       }`}
                     />
-                    <div className="absolute inset-0 bg-gradient-to-t from-black via-black/40 to-transparent" />
+                    <div className="absolute inset-0 bg-gradient-to-t from-black/70 via-black/25 to-transparent" />
                   </div>
                 </div>
 
                 {/* Card Info Overlay */}
                 <div
-                  className={`relative z-10 text-center p-4 sm:p-5 rounded-xl border transition-all duration-500 ${
-                    isCenter
-                      ? 'bg-black/75 backdrop-blur-md border-neutral-800 shadow-xl'
-                      : 'bg-black/50 backdrop-blur-sm border-white/5'
-                  }`}
+                  className="portfolio-glass-panel relative z-10 rounded-xl p-4 text-center transition-all duration-500 sm:p-5"
                 >
                   <span className="text-[10px] uppercase tracking-[0.25em] text-[#D8B4FE] font-semibold mb-1 block">
                     {project.category}

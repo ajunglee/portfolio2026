@@ -12,12 +12,15 @@ export interface FeaturedProject {
   client: string;
   role: string;
   previewBg: string; // CSS color gradient / styling
+  previewImage?: string;
+  hoverImage?: string;
   accentColor: string;
   images: string[];
 }
 
 export interface ScatterProject {
   id: string;
+  previewImage: string;
   title: string;
   edition: string;
   type: string;

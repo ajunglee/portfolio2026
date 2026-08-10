@@ -21,6 +21,9 @@ export const HeroSection: React.FC = () => {
   const [isTouchDevice, setIsTouchDevice] = useState(false);
   const [isMobileViewport, setIsMobileViewport] = useState(false);
   const [prefersReducedMotion, setPrefersReducedMotion] = useState(false);
+  const [viewportWidth, setViewportWidth] = useState(() =>
+    typeof window === 'undefined' ? 1440 : window.innerWidth
+  );
   const [scrollProgress, setScrollProgress] = useState(0);
 
   // Entrance states
@@ -47,15 +50,18 @@ export const HeroSection: React.FC = () => {
     const syncPreferences = () => {
       setIsMobileViewport(mobileQuery.matches);
       setPrefersReducedMotion(reducedMotionQuery.matches);
+      setViewportWidth(window.innerWidth);
     };
 
     syncPreferences();
     mobileQuery.addEventListener('change', syncPreferences);
     reducedMotionQuery.addEventListener('change', syncPreferences);
+    window.addEventListener('resize', syncPreferences);
 
     return () => {
       mobileQuery.removeEventListener('change', syncPreferences);
       reducedMotionQuery.removeEventListener('change', syncPreferences);
+      window.removeEventListener('resize', syncPreferences);
     };
   }, []);
 
@@ -141,7 +147,8 @@ export const HeroSection: React.FC = () => {
   const sloganFade = isMobileViewport ? 0.88 : 0.96;
   const categoryFade = isMobileViewport ? 0.94 : 1;
   const backgroundDrift = isMobileViewport ? 5 : 7;
-  const backgroundScale = isMobileViewport ? 1.12 : 1.16;
+  const backgroundScaleProgress = Math.min(Math.max((viewportWidth - 1024) / 416, 0), 1);
+  const backgroundScale = 1.04 - backgroundScaleProgress * 0.21;
   const sloganOpacity = prefersReducedMotion ? 1 : 1 - scrollProgress * sloganFade;
   const categoryOpacity = prefersReducedMotion ? 1 : 1 - scrollProgress * categoryFade;
   const mouseX = !isTouchDevice && !prefersReducedMotion ? mousePos.x : 0;
