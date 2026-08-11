@@ -276,7 +276,7 @@ export const ProjectsSection: React.FC<ProjectsSectionProps> = ({ onSelectScatte
 
         <div className="project-card-face h-full w-full overflow-hidden rounded-2xl border border-neutral-800 bg-black shadow-2xl transition-[border-color,box-shadow] duration-500 group-hover:border-[#7B00FF]/60 group-hover:shadow-[0_15px_35px_rgba(123,0,255,0.18)]">
           <div
-            className={`relative flex aspect-[3/4] w-full flex-col justify-between overflow-hidden bg-gradient-to-br p-3 ${proj.gradient}`}
+            className={`relative flex aspect-[3/4] w-full flex-col justify-end overflow-hidden bg-gradient-to-br p-3 ${proj.gradient}`}
           >
             <img
               src={proj.previewImage}
@@ -291,25 +291,21 @@ export const ProjectsSection: React.FC<ProjectsSectionProps> = ({ onSelectScatte
               aria-hidden="true"
             />
 
-            <div className="z-10 flex items-center">
-              <span className="rounded border border-[#7B00FF]/25 bg-black/60 px-2 py-0.5 text-[9px] font-bold uppercase tracking-widest text-white">
-                {proj.badge}
-              </span>
-            </div>
-
-            <div className="portfolio-glass-panel z-10 rounded-lg p-2.5">
-              <p className="truncate text-[11px] font-semibold text-white">{proj.title}</p>
-              <p className="mt-0.5 text-[9px] text-neutral-400">{proj.edition}</p>
-              <div className="mt-2 flex items-center justify-between border-t border-neutral-800 pt-1.5 text-[9px]">
-                <div>
-                  <span className="block text-neutral-500">Floor Price</span>
-                  <span className="font-mono font-medium text-[#C084FC]">{proj.floorPrice}</span>
-                </div>
-                <div className="text-right">
-                  <span className="block text-neutral-500">Auction</span>
-                  <span className="font-mono font-medium text-emerald-400">{proj.auctionPrice}</span>
-                </div>
-              </div>
+            <div className="portfolio-glass-panel z-10 rounded-xl p-4 md:p-5">
+              <p className="line-clamp-2 text-[14px] font-semibold leading-tight text-white md:text-[16px] xl:text-[18px]">
+                {proj.title}
+              </p>
+              <p className="mt-1 line-clamp-2 text-[11px] leading-relaxed text-neutral-300 md:text-[12px] xl:text-[13px]">
+                {proj.subtitle}
+              </p>
+              <ul
+                className="mt-3 flex flex-wrap gap-x-2 gap-y-1 border-t border-white/10 pt-3 text-[10px] text-[#D8B4FE] md:text-[11px] xl:text-[12px]"
+                aria-label="Project tags"
+              >
+                {proj.tags.map((tag) => (
+                  <li key={tag}>#{tag}</li>
+                ))}
+              </ul>
             </div>
           </div>
         </div>

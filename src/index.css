@@ -1,8 +1,8 @@
 @import "tailwindcss";
 
 @theme {
-  --font-sans: 'Kaisei Tokumin', serif;
-  --font-serif: 'Kaisei Tokumin', serif;
+  --font-sans: 'Kaisei Tokumin', 'Noto Sans KR', sans-serif;
+  --font-serif: 'Kaisei Tokumin', 'Noto Sans KR', serif;
 }
 
 @layer base {
@@ -14,7 +14,8 @@
   }
 
   html {
-    font-family: 'Kaisei Tokumin', serif;
+    font-family: 'Kaisei Tokumin', 'Noto Sans KR', sans-serif;
+    font-optical-sizing: auto;
   }
 
   body,
@@ -35,18 +36,11 @@
   h3,
   .font-serif-display,
   .font-syne {
-    font-family: 'Kaisei Tokumin', serif;
+    font-family: 'Kaisei Tokumin', 'Noto Sans KR', serif;
   }
 }
 
 @layer utilities {
-  .chiron-sung-hk,
-  .chiron-sung-hk * {
-    font-family: 'Chiron Sung HK', serif;
-    font-optical-sizing: auto;
-    font-style: normal;
-  }
-
   .archive-fade-mask {
     -webkit-mask-image: linear-gradient(
       to bottom,
@@ -543,6 +537,55 @@
 }
 ::-webkit-scrollbar-thumb:hover {
   background: #3b3b4f;
+}
+
+/* About dialog: entrance and floating mineral motion. */
+@keyframes aboutPopupBackdropIn {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+@keyframes aboutPopupPanelIn {
+  from {
+    opacity: 0;
+    transform: translateY(28px) scale(0.975);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
+}
+
+@keyframes aboutMineralFloat {
+  0%,
+  100% {
+    translate: 0 0;
+  }
+  50% {
+    translate: 0 -12px;
+  }
+}
+
+.about-popup-backdrop {
+  animation: aboutPopupBackdropIn 260ms ease-out both;
+}
+
+.about-popup-panel {
+  animation: aboutPopupPanelIn 420ms cubic-bezier(0.22, 1, 0.36, 1) both;
+  scrollbar-color: #7b00ff #000000;
+}
+
+.about-floating-mineral {
+  animation: aboutMineralFloat 7s ease-in-out infinite;
+}
+
+.about-floating-mineral--reverse {
+  animation-direction: reverse;
+  animation-duration: 9s;
 }
 
 @media (prefers-reduced-motion: reduce) {

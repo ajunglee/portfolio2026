@@ -22,6 +22,8 @@ export interface ScatterProject {
   id: string;
   previewImage: string;
   title: string;
+  subtitle: string;
+  tags: string[];
   edition: string;
   type: string;
   floorPrice: string;

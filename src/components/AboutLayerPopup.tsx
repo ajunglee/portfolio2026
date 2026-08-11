@@ -1,35 +1,150 @@
 import React, { useEffect, useRef } from 'react';
-import { Layers3, Search, Sparkles, X } from 'lucide-react';
+import { X } from 'lucide-react';
 
 interface AboutLayerPopupProps {
   isOpen: boolean;
   onClose: () => void;
 }
 
-const DISCIPLINES = [
-  {
-    title: '웹 UI/UX',
-    description: '복잡한 사용자 여정을 명확하고 직관적인 디지털 경험으로 정리합니다.',
-    icon: Search,
-  },
-  {
-    title: '비주얼 디자인',
-    description: '모든 접점이 하나의 분명한 목소리를 갖도록 시각 체계를 설계합니다.',
-    icon: Layers3,
-  },
-  {
-    title: '모션',
-    description: '움직임으로 시선을 이끌고 변화를 설명하며 경험의 리듬을 만듭니다.',
-    icon: Sparkles,
-  },
-];
+const ABOUT_MEDIA = {
+  hero: new URL('../images/about_top_bg.jpg', import.meta.url).href,
+  whyCrystals: [
+    new URL('../images/about_crystal1.png', import.meta.url).href,
+    new URL('../images/about_crystal2.png', import.meta.url).href,
+    new URL('../images/about_crystal3.png', import.meta.url).href,
+    new URL('../images/about_crystal4.png', import.meta.url).href,
+    new URL('../images/about_crystal5.png', import.meta.url).href,
+  ],
+  quoteTextures: [
+    new URL('../images/about_crack1.jpg', import.meta.url).href,
+    new URL('../images/about_crack2.jpg', import.meta.url).href,
+    new URL('../images/about_crack3.jpg', import.meta.url).href,
+    new URL('../images/about_crack4.jpg', import.meta.url).href,
+    new URL('../images/about_crack5.jpg', import.meta.url).href,
+    new URL('../images/about_crack6.jpg', import.meta.url).href,
+  ],
+  atmosphere: new URL('../images/about_dust.png', import.meta.url).href,
+  conceptCards: [
+    new URL('../images/about_card1.png', import.meta.url).href,
+    new URL('../images/about_card2.png', import.meta.url).href,
+    new URL('../images/about_card3.png', import.meta.url).href,
+    new URL('../images/about_card4.png', import.meta.url).href,
+    new URL('../images/about_card5.png', import.meta.url).href,
+    new URL('../images/about_card6.png', import.meta.url).href,
+  ],
+} as const;
 
-const PROCESS = [
-  ['01', '탐색', '요청의 이면을 살피고 정말 중요한 질문을 발견합니다.'],
-  ['02', '정의', '관찰한 내용을 명확한 방향과 우선순위로 정리합니다.'],
-  ['03', '디자인', '인터랙션, 이미지, 타이포그래피, 모션을 하나의 아이디어로 연결합니다.'],
-  ['04', '다듬기', '모든 요소가 같은 의도를 말할 때까지 세부를 검증하고 다듬습니다.'],
-];
+const WHY_DIGGING = [
+  {
+    number: '01',
+    text: '디자인을 시작하기 전에 문제를 먼저 이해하려고 해요.',
+  },
+  {
+    number: '02',
+    text: '첫 번째 아이디어보다 더 나은 방향이 있는지 고민해요.',
+  },
+  {
+    number: '03',
+    text: '여러 가지 경우의 수를 두고 주변 사람들과 의견을 나눠요.',
+  },
+] as const;
+
+const FOUND_BY_OTHERS = [
+  {
+    quote: '어디까지 파고들지 스스로 정하고 끝까지 답을 찾아요.',
+    author: '동료 디자이너',
+    fallback:
+      'bg-[radial-gradient(circle_at_48%_42%,rgba(87,69,99,0.48),rgba(17,17,17,0.92)_48%,#050505_74%)]',
+  },
+  {
+    quote: '업무할 때 꼼꼼하게 짚어 믿고 맡길 수 있어요.',
+    author: '프로젝트 매니저',
+    fallback:
+      'bg-[radial-gradient(circle_at_54%_36%,rgba(85,79,63,0.46),rgba(18,18,17,0.92)_50%,#050505_76%)]',
+  },
+  {
+    quote: '감정에 치우치지 않고 전체적인 관점으로 해결해요.',
+    author: '협업 파트너',
+    fallback:
+      'bg-[radial-gradient(circle_at_42%_46%,rgba(67,78,91,0.48),rgba(16,17,18,0.94)_52%,#050505_77%)]',
+  },
+  {
+    quote: '한 문제를 깊이 살피고 더 나은 결과를 만들어요.',
+    author: '동료',
+    fallback:
+      'bg-[radial-gradient(circle_at_56%_45%,rgba(72,60,88,0.5),rgba(15,15,16,0.94)_49%,#040404_76%)]',
+  },
+  {
+    quote: '삶과 일에 진취적이고 합리적인 것을 좋아해요.',
+    author: '친구',
+    fallback:
+      'bg-[radial-gradient(circle_at_46%_38%,rgba(80,69,56,0.48),rgba(17,16,15,0.94)_51%,#050505_78%)]',
+  },
+  {
+    quote: '다른 사람의 이야기를 잘 들어주고 조언해줘요.',
+    author: '동료',
+    fallback:
+      'bg-[radial-gradient(circle_at_52%_44%,rgba(59,75,79,0.5),rgba(15,17,17,0.94)_50%,#040505_77%)]',
+  },
+] as const;
+
+const DESIGN_CONCEPTS = [
+  {
+    title: 'CAVE',
+    rotation: '-rotate-[4deg] translate-y-3',
+  },
+  {
+    title: 'LIGHT',
+    rotation: 'rotate-[2deg]',
+  },
+  {
+    title: 'CRYSTAL',
+    rotation: 'rotate-[5deg] translate-y-4',
+  },
+  {
+    title: 'CRACK',
+    rotation: 'rotate-[3deg] -translate-y-2',
+  },
+  {
+    title: 'DUST',
+    rotation: '-rotate-[3deg] -translate-y-1',
+  },
+  {
+    title: 'METAL',
+    rotation: 'rotate-[4deg] -translate-y-2',
+  },
+] as const;
+
+interface MediaSlotProps {
+  src?: string;
+  alt: string;
+  className: string;
+  fallbackClassName: string;
+  loading?: 'eager' | 'lazy';
+}
+
+const MediaSlot: React.FC<MediaSlotProps> = ({
+  src,
+  alt,
+  className,
+  fallbackClassName,
+  loading = 'lazy',
+}) => {
+  if (src) {
+    return (
+      <img
+        src={src}
+        alt={alt}
+        className={className}
+        loading={loading}
+        decoding="async"
+        draggable={false}
+      />
+    );
+  }
+
+  return <div className={className + ' ' + fallbackClassName} aria-hidden="true" />;
+};
 
 const AboutLayerPopup: React.FC<AboutLayerPopupProps> = ({ isOpen, onClose }) => {
   const dialogRef = useRef<HTMLDivElement | null>(null);
@@ -92,12 +207,12 @@ const AboutLayerPopup: React.FC<AboutLayerPopupProps> = ({ isOpen, onClose }) =>
 
   return (
     <div
-      className="fixed inset-0 z-[100] flex items-center justify-center overflow-hidden p-4 sm:p-6 lg:p-10"
+      className="fixed inset-0 z-[100] flex items-center justify-center overflow-hidden sm:p-6 lg:p-10"
       onMouseDown={(event) => {
         if (event.target === event.currentTarget) onCloseRef.current();
       }}
     >
-      <div className="about-popup-backdrop pointer-events-none absolute inset-0 bg-black/90 backdrop-blur-xl" />
+      <div className="about-popup-backdrop pointer-events-none absolute inset-0 bg-black/92 backdrop-blur-xl" />
 
       <div
         ref={dialogRef}
@@ -106,13 +221,11 @@ const AboutLayerPopup: React.FC<AboutLayerPopupProps> = ({ isOpen, onClose }) =>
         aria-labelledby="about-popup-title"
         aria-describedby="about-popup-description"
         lang="ko"
-        className="about-popup-panel chiron-sung-hk relative z-10 max-h-[90svh] w-full max-w-6xl overflow-y-auto overscroll-contain rounded-2xl border border-[#7B00FF]/35 bg-black text-white shadow-[0_24px_100px_rgba(123,0,255,0.24)]"
+        className="about-popup-panel relative z-10 h-[100svh] w-full max-w-[960px] overflow-y-auto overscroll-contain bg-black text-white shadow-[0_24px_100px_rgba(0,0,0,0.72)] sm:h-auto sm:max-h-[94svh] sm:rounded-2xl sm:border sm:border-white/10"
         onMouseDown={(event) => event.stopPropagation()}
       >
-        <header className="sticky top-0 z-30 flex items-center justify-between border-b border-white/10 bg-black/80 px-5 py-4 backdrop-blur-xl sm:px-8">
-          <span className="text-[11px] uppercase tracking-[0.22em] text-[#C084FC]">
-            소개 / 디자인 접근 방식
-          </span>
+        <header className="sticky top-0 z-50 flex items-center justify-between border-b border-white/10 bg-black/72 px-5 py-3 backdrop-blur-xl sm:px-8">
+          <span className="text-[11px] uppercase tracking-[0.22em] text-[#C084FC]">About</span>
           <button
             ref={closeButtonRef}
             type="button"
@@ -124,105 +237,216 @@ const AboutLayerPopup: React.FC<AboutLayerPopupProps> = ({ isOpen, onClose }) =>
           </button>
         </header>
 
-        <div className="p-5 sm:p-8 lg:p-12">
-          <section className="grid items-center gap-10 border-b border-white/10 pb-12 lg:grid-cols-[1.15fr_0.85fr] lg:gap-16 lg:pb-16">
-            <div>
-              <p className="mb-4 text-xs tracking-[0.18em] text-[#B875FF]">깊이 파고드는 디자이너</p>
+        <main className="overflow-hidden bg-black">
+          <section
+            className="relative isolate min-h-[445px] overflow-hidden sm:min-h-[720px] lg:min-h-[780px]"
+            aria-labelledby="about-popup-title"
+          >
+            <MediaSlot
+              src={ABOUT_MEDIA.hero}
+              alt=""
+              className="absolute inset-0 size-full bg-black object-contain object-top"
+              fallbackClassName="bg-[radial-gradient(circle_at_50%_34%,rgba(175,111,255,0.44),transparent_16%),radial-gradient(circle_at_50%_40%,rgba(245,187,79,0.22),transparent_30%),#030303]"
+              loading="eager"
+            />
+            <div
+              className="absolute inset-0 bg-[linear-gradient(to_bottom,transparent_0%,transparent_64%,rgba(0,0,0,0.55)_82%,#000_100%)]"
+              aria-hidden="true"
+            />
+
+            <div className="absolute inset-x-5 bottom-12 z-10 text-center sm:bottom-16">
               <h2
                 id="about-popup-title"
-                className="max-w-3xl text-4xl font-medium leading-[1.08] tracking-tight sm:text-6xl lg:text-7xl"
+                className="w-full origin-center text-center font-serif-display text-[clamp(3.5rem,14vw,8.5rem)] font-medium leading-none tracking-[0.015em] text-white xl:scale-x-[0.82] xl:text-[180px] xl:tracking-[-0.055em]"
               >
-                보이는 것 너머의 이유를 파고듭니다.
+                DIGGING
               </h2>
               <p
                 id="about-popup-description"
-                className="mt-6 max-w-2xl text-base leading-8 text-neutral-300 sm:text-lg sm:leading-9"
+                className="mt-3 font-serif-display text-xs tracking-[0.04em] text-neutral-300 sm:text-base xl:text-[32px] xl:tracking-[-0.02em]"
               >
-                좋은 디자인은 첫 화면을 그리기 전부터 시작됩니다. 눈앞의 문제 아래를
-                들여다보고, 정말 해결할 가치가 있는 지점을 찾아 사람들이 쉽게 이해하고
-                오래 기억할 경험으로 바꿉니다.
+                Finding solutions beneath the surface.
               </p>
-            </div>
-
-            <div className="relative mx-auto aspect-square w-full max-w-[360px]" aria-hidden="true">
-              <div className="absolute inset-[8%] rounded-full border border-[#7B00FF]/25 shadow-[0_0_80px_rgba(123,0,255,0.24)]" />
-              <div className="absolute inset-[22%] animate-[aboutOrbit_12s_linear_infinite] rounded-[38%] border border-[#B875FF]/45 bg-[#7B00FF]/10 shadow-[inset_0_0_45px_rgba(123,0,255,0.2)] motion-reduce:animate-none" />
-              <div className="absolute inset-[37%] rotate-45 rounded-xl border border-white/40 bg-[#7B00FF]/35 shadow-[0_0_55px_rgba(123,0,255,0.65)] backdrop-blur-md" />
-              <div className="absolute inset-0 bg-[radial-gradient(circle_at_center,rgba(184,117,255,0.22),transparent_62%)]" />
             </div>
           </section>
 
-          <section className="border-b border-white/10 py-12 lg:py-16" aria-labelledby="about-disciplines-title">
-            <div className="mb-8 flex flex-col gap-2 sm:flex-row sm:items-end sm:justify-between">
-              <h3 id="about-disciplines-title" className="text-2xl sm:text-3xl">제가 탐구하는 영역</h3>
-              <p className="text-sm text-neutral-500">세 가지 분야를 하나의 연결된 경험으로 만듭니다.</p>
-            </div>
+          <section
+            className="relative isolate px-5 pb-24 pt-32 sm:px-10 sm:pb-32 sm:pt-44 xl:pt-52"
+            aria-labelledby="why-digging-title"
+          >
+            <img
+              src={ABOUT_MEDIA.whyCrystals[3]}
+              alt=""
+              aria-hidden="true"
+              className="about-floating-mineral pointer-events-none absolute -top-5 left-16 z-0 w-24 -rotate-[18deg] opacity-45 mix-blend-screen sm:-top-6 sm:left-24 sm:w-32"
+              draggable={false}
+            />
+            <img
+              src={ABOUT_MEDIA.whyCrystals[4]}
+              alt=""
+              aria-hidden="true"
+              className="about-floating-mineral about-floating-mineral--reverse pointer-events-none absolute -top-8 left-36 z-0 w-12 rotate-[18deg] opacity-35 mix-blend-screen sm:-top-10 sm:left-52 sm:w-16"
+              draggable={false}
+            />
+            <img
+              src={ABOUT_MEDIA.whyCrystals[2]}
+              alt=""
+              aria-hidden="true"
+              className="about-floating-mineral pointer-events-none absolute left-[62%] top-16 z-0 w-48 -translate-x-1/2 rotate-[16deg] opacity-45 mix-blend-screen sm:top-14 sm:w-64"
+              draggable={false}
+            />
+            <img
+              src={ABOUT_MEDIA.whyCrystals[1]}
+              alt=""
+              aria-hidden="true"
+              className="about-floating-mineral about-floating-mineral--reverse pointer-events-none absolute bottom-4 -left-20 z-0 w-64 -rotate-[24deg] opacity-40 mix-blend-screen sm:bottom-6 sm:w-80"
+              draggable={false}
+            />
+            <img
+              src={ABOUT_MEDIA.whyCrystals[0]}
+              alt=""
+              aria-hidden="true"
+              className="about-floating-mineral pointer-events-none absolute -bottom-16 -right-12 z-0 w-44 rotate-[26deg] opacity-45 mix-blend-screen sm:-bottom-20 sm:w-56"
+              draggable={false}
+            />
 
-            <div className="grid gap-4 md:grid-cols-3">
-              {DISCIPLINES.map(({ title, description, icon: Icon }) => (
+            <div className="relative z-10 mx-auto max-w-3xl">
+              <h3
+                id="why-digging-title"
+                className="mb-8 text-center font-serif-display text-3xl text-white sm:mb-12 sm:text-5xl xl:text-[80px]"
+              >
+                Why Digging?
+              </h3>
+
+              <ol className="space-y-3 sm:space-y-4">
+                {WHY_DIGGING.map(({ number, text }) => (
+                  <li
+                    key={number}
+                    className="flex items-start gap-3 rounded-[3rem] border border-white/15 bg-[linear-gradient(120deg,rgba(255,255,255,0.11),rgba(255,255,255,0.035))] px-6 py-5 text-[11px] leading-[1.55] text-neutral-200 shadow-[inset_0_1px_0_rgba(255,255,255,0.14),0_14px_35px_rgba(0,0,0,0.32)] backdrop-blur-xl sm:items-center sm:gap-5 sm:px-8 sm:py-6 sm:text-sm xl:gap-6 xl:px-10 xl:py-7 xl:text-[24px]"
+                  >
+                    <span className="shrink-0 whitespace-nowrap bg-gradient-to-r from-[#7B00FF] via-[#C840FF] to-[#FFB14A] bg-clip-text text-[10px] font-semibold tracking-[0.08em] text-transparent sm:text-xs xl:text-[24px]">
+                      {number}
+                    </span>
+                    <span>{text}</span>
+                  </li>
+                ))}
+              </ol>
+            </div>
+          </section>
+
+          <section
+            className="px-4 pb-24 sm:px-10 sm:pb-32"
+            aria-labelledby="found-by-others-title"
+          >
+            <h3
+              id="found-by-others-title"
+              className="mb-10 text-center font-serif-display text-3xl text-white sm:mb-14 sm:text-5xl xl:text-[48px]"
+            >
+              Found by Others
+            </h3>
+
+            <div className="mx-auto grid max-w-3xl grid-cols-3 gap-1 sm:gap-3">
+              {FOUND_BY_OTHERS.map(({ quote, author, fallback }, index) => (
                 <article
-                  key={title}
-                  className="rounded-2xl border border-white/10 bg-white/[0.035] p-6 transition-colors hover:border-[#7B00FF]/50 hover:bg-[#7B00FF]/10"
+                  key={author + '-' + index}
+                  className="relative isolate aspect-square overflow-hidden bg-black"
                 >
-                  <Icon className="mb-8 size-6 text-[#B875FF]" aria-hidden="true" />
-                  <h4 className="mb-3 text-xl text-white">{title}</h4>
-                  <p className="text-sm leading-7 text-neutral-400">{description}</p>
+                  <MediaSlot
+                    src={ABOUT_MEDIA.quoteTextures[index]}
+                    alt=""
+                    className="absolute inset-0 size-full object-cover opacity-85"
+                    fallbackClassName={fallback}
+                  />
+                  <div
+                    className="absolute inset-0 bg-[radial-gradient(circle_at_center,rgba(0,0,0,0.08),rgba(0,0,0,0.58)_76%)]"
+                    aria-hidden="true"
+                  />
+                  <blockquote className="absolute inset-0 flex flex-col items-center justify-center px-2 text-center sm:px-5">
+                    <p className="text-[7px] leading-[1.55] text-neutral-200 min-[420px]:text-[8px] sm:text-[11px] sm:leading-5 xl:text-[18px] xl:leading-[1.45]">
+                      {quote}
+                    </p>
+                    <cite className="mt-1 text-[6px] not-italic text-neutral-500 min-[420px]:text-[7px] sm:mt-2 sm:text-[9px] xl:text-[16px]">
+                      — {author}
+                    </cite>
+                  </blockquote>
                 </article>
               ))}
             </div>
           </section>
 
-          <section className="pt-12 lg:pt-16" aria-labelledby="about-process-title">
-            <h3 id="about-process-title" className="mb-8 text-2xl sm:text-3xl">제가 파고드는 방식</h3>
-            <ol className="grid gap-px overflow-hidden rounded-2xl border border-white/10 bg-white/10 md:grid-cols-4">
-              {PROCESS.map(([number, title, description]) => (
-                <li key={number} className="bg-black p-6 lg:min-h-56 lg:p-7">
-                  <span className="text-xs tracking-[0.2em] text-[#B875FF]">{number}</span>
-                  <h4 className="mt-8 text-xl text-white">{title}</h4>
-                  <p className="mt-3 text-sm leading-7 text-neutral-400">{description}</p>
-                </li>
-              ))}
-            </ol>
-
-            <p className="mx-auto mt-12 max-w-3xl text-center text-xl leading-relaxed text-neutral-200 sm:text-2xl">
-              모든 문제의 이면에는 발견할 가치가 있는 무언가가 있습니다.
-            </p>
+          <section className="relative aspect-[1647/955] overflow-hidden" aria-label="Digging">
+            <MediaSlot
+              src={ABOUT_MEDIA.atmosphere}
+              alt=""
+              className="absolute inset-0 size-full object-cover object-center opacity-90"
+              fallbackClassName="bg-[radial-gradient(ellipse_at_75%_52%,rgba(203,223,255,0.62),rgba(67,79,103,0.32)_25%,rgba(0,0,0,0.98)_65%)]"
+            />
+            <div
+              className="absolute inset-0 bg-[linear-gradient(to_bottom,#000_0%,transparent_22%,rgba(0,0,0,0.22)_62%,#000_100%)]"
+              aria-hidden="true"
+            />
+            <div className="absolute inset-0 flex flex-col items-center justify-center text-center">
+              <span className="text-[9px] tracking-[0.28em] text-white/20 sm:text-xs xl:text-[24px]">
+                파다, 파내다.
+              </span>
+              <span className="mt-2 font-serif-display text-5xl tracking-[0.04em] text-white/[0.08] sm:text-8xl">
+                Digging
+              </span>
+            </div>
           </section>
-        </div>
+
+          <section
+            className="px-3 pb-24 pt-20 sm:px-8 sm:pb-32 sm:pt-28"
+            aria-labelledby="design-concept-title"
+          >
+            <h3
+              id="design-concept-title"
+              className="mb-12 text-center font-serif-display text-3xl text-white sm:mb-16 sm:text-5xl xl:text-[80px]"
+            >
+              Design Concept
+            </h3>
+
+            <div className="mx-auto grid max-w-3xl grid-cols-3 gap-x-0 gap-y-0 px-1 sm:gap-x-3 sm:px-5">
+              {DESIGN_CONCEPTS.map(({ title, rotation }, index) => (
+                <article
+                  key={title}
+                  className={[
+                    'relative isolate aspect-[7/10] overflow-visible drop-shadow-[0_18px_28px_rgba(0,0,0,0.72)]',
+                    rotation,
+                  ].join(' ')}
+                >
+                  <img
+                    src={ABOUT_MEDIA.conceptCards[index]}
+                    alt={`${title} 디자인 콘셉트 카드`}
+                    className="absolute inset-0 size-full object-contain"
+                    loading="lazy"
+                    decoding="async"
+                    draggable={false}
+                  />
+                </article>
+              ))}
+            </div>
+          </section>
+
+          <section className="relative pb-14 pt-2 text-center sm:pb-20">
+            <div
+              className="pointer-events-none absolute inset-x-0 bottom-0 h-52 bg-[radial-gradient(ellipse_at_bottom,rgba(123,0,255,0.12),transparent_68%)]"
+              aria-hidden="true"
+            />
+            <p className="relative mb-5 font-serif-display text-xs tracking-[0.08em] text-neutral-400 xl:text-[24px]">
+              keep digging
+            </p>
+            <button
+              type="button"
+              onClick={() => onCloseRef.current()}
+              aria-label="소개 팝업 닫기"
+              className="relative mx-auto flex size-12 cursor-pointer items-center justify-center rounded-full border border-white/10 bg-white/[0.025] text-neutral-500 transition-all duration-300 hover:border-[#7B00FF]/60 hover:bg-[#7B00FF]/15 hover:text-white focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-[#B875FF]"
+            >
+              <X className="size-5" aria-hidden="true" />
+            </button>
+          </section>
+        </main>
       </div>
-
-      <style>{`
-        @keyframes aboutPopupBackdropIn {
-          from { opacity: 0; }
-          to { opacity: 1; }
-        }
-
-        @keyframes aboutPopupPanelIn {
-          from { opacity: 0; transform: translateY(28px) scale(0.975); }
-          to { opacity: 1; transform: translateY(0) scale(1); }
-        }
-
-        @keyframes aboutOrbit {
-          from { transform: rotate(0deg); }
-          to { transform: rotate(360deg); }
-        }
-
-        .about-popup-backdrop {
-          animation: aboutPopupBackdropIn 260ms ease-out both;
-        }
-
-        .about-popup-panel {
-          animation: aboutPopupPanelIn 420ms cubic-bezier(0.22, 1, 0.36, 1) both;
-          scrollbar-color: #7B00FF #000000;
-        }
-
-        @media (prefers-reduced-motion: reduce) {
-          .about-popup-backdrop,
-          .about-popup-panel {
-            animation: none;
-          }
-        }
-      `}</style>
     </div>
   );
 };
