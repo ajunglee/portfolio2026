@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useCallback, useEffect, useState } from 'react';
 import { ArrowUp } from 'lucide-react';
 
 import { FEATURED_PROJECTS, SCATTER_PROJECTS } from './data';
@@ -11,15 +11,20 @@ import { ProjectsSection } from './components/ProjectsSection';
 import { ArchiveSection } from './components/ArchiveSection';
 import { ContactSection } from './components/ContactSection';
 import { LayerPopup } from './components/LayerPopup';
+import { ProjectGalleryPopup } from './components/ProjectGalleryPopup';
 import { ProjectLayerPopup } from './components/ProjectLayerPopup';
 import { CustomCursor } from './components/CustomCursor';
+
+type ProjectsOverlay =
+  | { kind: 'closed' }
+  | { kind: 'gallery'; focusProjectId?: string }
+  | { kind: 'detail'; project: ScatterProject; origin: 'page' | 'gallery' };
 
 export default function App() {
   // Selected Featured project for Layer Popup
   const [selectedFeatured, setSelectedFeatured] = useState<FeaturedProject | null>(null);
 
-  // Selected Scatter project for Layer Popup
-  const [selectedScatter, setSelectedScatter] = useState<ScatterProject | null>(null);
+  const [projectsOverlay, setProjectsOverlay] = useState<ProjectsOverlay>({ kind: 'closed' });
   const [showBackToTop, setShowBackToTop] = useState(false);
 
   useEffect(() => {
@@ -64,20 +69,52 @@ export default function App() {
     setSelectedFeatured(FEATURED_PROJECTS[nextIndex]);
   };
 
-  const handleNavigateScatter = (direction: 'prev' | 'next') => {
-    if (!selectedScatter) return;
-    const currentIndex = SCATTER_PROJECTS.findIndex((project) => project.id === selectedScatter.id);
-    const total = SCATTER_PROJECTS.length;
-    let nextIndex = 0;
+  const handleNavigateScatter = useCallback((direction: 'prev' | 'next') => {
+    setProjectsOverlay((current) => {
+      if (current.kind !== 'detail') return current;
 
-    if (direction === 'prev') {
-      nextIndex = (currentIndex - 1 + total) % total;
-    } else {
-      nextIndex = (currentIndex + 1) % total;
-    }
+      const currentIndex = SCATTER_PROJECTS.findIndex(
+        (project) => project.id === current.project.id,
+      );
+      const total = SCATTER_PROJECTS.length;
+      const nextIndex = direction === 'prev'
+        ? (currentIndex - 1 + total) % total
+        : (currentIndex + 1) % total;
 
-    setSelectedScatter(SCATTER_PROJECTS[nextIndex]);
-  };
+      return { ...current, project: SCATTER_PROJECTS[nextIndex] };
+    });
+  }, []);
+
+  const handleOpenScatterProject = useCallback((project: ScatterProject) => {
+    setSelectedFeatured(null);
+    setProjectsOverlay({ kind: 'detail', project, origin: 'page' });
+  }, []);
+
+  const handleOpenProjectGallery = useCallback(() => {
+    setSelectedFeatured(null);
+    setProjectsOverlay({ kind: 'gallery' });
+  }, []);
+
+  const handleSelectGalleryProject = useCallback((project: ScatterProject) => {
+    setProjectsOverlay({ kind: 'detail', project, origin: 'gallery' });
+  }, []);
+
+  const handleCloseProjectDetail = useCallback(() => {
+    setProjectsOverlay((current) => {
+      if (current.kind !== 'detail') return current;
+
+      return current.origin === 'gallery'
+        ? { kind: 'gallery', focusProjectId: current.project.id }
+        : { kind: 'closed' };
+    });
+  }, []);
+
+  const handleCloseProjectGallery = useCallback(() => {
+    setProjectsOverlay({ kind: 'closed' });
+    window.requestAnimationFrame(() => {
+      document.getElementById('projects-gallery-trigger')?.focus();
+    });
+  }, []);
 
   const handleOpenContactModal = () => {
     const el = document.getElementById('contact');
@@ -120,7 +157,10 @@ export default function App() {
       <FeaturedSection onSelectProject={(project) => setSelectedFeatured(project)} />
 
       {/* 04. Projects Section */}
-      <ProjectsSection onSelectScatterProject={(scatter) => setSelectedScatter(scatter)} />
+      <ProjectsSection
+        onSelectScatterProject={handleOpenScatterProject}
+        onOpenProjectGallery={handleOpenProjectGallery}
+      />
 
       {/* 05. Visual Archive Section */}
       <ArchiveSection />
@@ -141,11 +181,22 @@ export default function App() {
         onNavigate={handleNavigateFeatured}
       />
 
-      {/* Layer Popup for Projects */}
+      {/* Gallery Popup for all Projects */}
+      <ProjectGalleryPopup
+        isOpen={projectsOverlay.kind === 'gallery'}
+        projects={SCATTER_PROJECTS}
+        initialFocusProjectId={
+          projectsOverlay.kind === 'gallery' ? projectsOverlay.focusProjectId : undefined
+        }
+        onClose={handleCloseProjectGallery}
+        onSelectProject={handleSelectGalleryProject}
+      />
+
+      {/* Layer Popup for a selected Project */}
       <ProjectLayerPopup
-        project={selectedScatter}
+        project={projectsOverlay.kind === 'detail' ? projectsOverlay.project : null}
         allProjects={SCATTER_PROJECTS}
-        onClose={() => setSelectedScatter(null)}
+        onClose={handleCloseProjectDetail}
         onNavigate={handleNavigateScatter}
       />
     </div>

@@ -10,17 +10,28 @@ interface ProjectLayerPopupProps {
   onNavigate: (direction: 'prev' | 'next') => void;
 }
 
+const clampPercentage = (value: number) => Math.min(100, Math.max(0, value));
+
 export const ProjectLayerPopup: React.FC<ProjectLayerPopupProps> = ({
   project,
   allProjects,
   onClose,
-  onNavigate
+  onNavigate,
 }) => {
   const dialogRef = useRef<HTMLDivElement>(null);
   const closeButtonRef = useRef<HTMLButtonElement>(null);
+  const onCloseRef = useRef(onClose);
+  const onNavigateRef = useRef(onNavigate);
+  const projectId = project?.id;
+  const isOpen = Boolean(project);
 
   useEffect(() => {
-    if (!project) return;
+    onCloseRef.current = onClose;
+    onNavigateRef.current = onNavigate;
+  }, [onClose, onNavigate]);
+
+  useEffect(() => {
+    if (!isOpen) return;
 
     const previousOverflow = document.body.style.overflow;
     const previouslyFocused = document.activeElement as HTMLElement | null;
@@ -31,19 +42,19 @@ export const ProjectLayerPopup: React.FC<ProjectLayerPopupProps> = ({
     const handleKeyDown = (event: KeyboardEvent) => {
       if (event.key === 'Escape') {
         event.preventDefault();
-        onClose();
+        onCloseRef.current();
         return;
       }
 
       if (event.key === 'ArrowLeft') {
         event.preventDefault();
-        onNavigate('prev');
+        onNavigateRef.current('prev');
         return;
       }
 
       if (event.key === 'ArrowRight') {
         event.preventDefault();
-        onNavigate('next');
+        onNavigateRef.current('next');
         return;
       }
 
@@ -51,8 +62,8 @@ export const ProjectLayerPopup: React.FC<ProjectLayerPopupProps> = ({
 
       const focusableElements = Array.from(
         dialogRef.current.querySelectorAll(
-          'button:not([disabled]), [href], input:not([disabled]), select:not([disabled]), textarea:not([disabled]), [tabindex]:not([tabindex="-1"])'
-        )
+          'button:not([disabled]), [href], input:not([disabled]), select:not([disabled]), textarea:not([disabled]), [tabindex]:not([tabindex="-1"])',
+        ),
       ) as HTMLElement[];
 
       const firstElement = focusableElements[0];
@@ -77,7 +88,17 @@ export const ProjectLayerPopup: React.FC<ProjectLayerPopupProps> = ({
       document.body.style.overflow = previousOverflow;
       previouslyFocused?.focus();
     };
-  }, [project, onClose, onNavigate]);
+  }, [isOpen]);
+
+  useEffect(() => {
+    if (!projectId) return;
+
+    const scrollFrame = window.requestAnimationFrame(() => {
+      dialogRef.current?.scrollTo({ top: 0, behavior: 'auto' });
+    });
+
+    return () => window.cancelAnimationFrame(scrollFrame);
+  }, [projectId]);
 
   if (!project) return null;
 
@@ -86,15 +107,24 @@ export const ProjectLayerPopup: React.FC<ProjectLayerPopupProps> = ({
   const hasMultipleProjects = allProjects.length > 1;
   const titleId = `project-popup-title-${project.id}`;
   const descriptionId = `project-popup-description-${project.id}`;
+  const colorTitleId = `project-popup-color-title-${project.id}`;
+  const fontTitleId = `project-popup-font-title-${project.id}`;
+  const mockupTitleId = `project-popup-mockup-title-${project.id}`;
+  const accentColor = project.colors[0]?.hex ?? '#7B00FF';
+  const mockupImage = project.mockupImage;
+  const mockupMobileImage = project.mockupMobileImage;
+  const projectCountLabel = `${String(currentPosition).padStart(2, '0')} / ${String(
+    allProjects.length,
+  ).padStart(2, '0')}`;
 
   return (
     <div
-      className="fixed inset-0 z-[100] flex items-center justify-center overflow-hidden p-4 sm:p-6 lg:p-10"
+      className="fixed inset-0 z-[100] flex items-center justify-center overflow-hidden sm:p-6 lg:p-10"
       onMouseDown={(event) => {
         if (event.target === event.currentTarget) onClose();
       }}
     >
-      <div className="pointer-events-none absolute inset-0 bg-black/90 backdrop-blur-xl project-popup-backdrop" />
+      <div className="project-popup-backdrop pointer-events-none absolute inset-0 bg-black/90 backdrop-blur-xl" />
 
       <div
         ref={dialogRef}
@@ -102,15 +132,18 @@ export const ProjectLayerPopup: React.FC<ProjectLayerPopupProps> = ({
         aria-modal="true"
         aria-labelledby={titleId}
         aria-describedby={descriptionId}
-        className="project-popup-panel relative z-10 max-h-[90svh] w-full max-w-5xl overflow-y-auto overscroll-contain rounded-2xl border border-[#7B00FF]/30 bg-black text-white shadow-[0_24px_90px_rgba(123,0,255,0.22)]"
+        lang="ko"
+        className="project-popup-panel relative z-10 h-[100svh] w-full max-w-[1180px] overflow-y-auto overscroll-contain bg-[#080808] text-white shadow-[0_24px_100px_rgba(0,0,0,0.82)] sm:h-auto sm:max-h-[94svh] sm:rounded-2xl sm:border sm:border-white/10"
         onMouseDown={(event) => event.stopPropagation()}
       >
-        <header className="sticky top-0 z-30 flex items-center justify-between gap-4 border-b border-white/10 bg-black/85 px-5 py-4 backdrop-blur-xl sm:px-8">
-          <div className="flex min-w-0 items-center gap-2.5">
-            <span className="rounded-full border border-[#7B00FF]/35 bg-[#7B00FF]/15 px-3 py-1 text-[11px] uppercase tracking-[0.18em] text-[#D8B4FE]">
-              {project.type}
+        <header className="sticky top-0 z-40 flex items-center justify-between gap-4 border-b border-white/10 bg-black/80 px-5 py-3 backdrop-blur-xl sm:px-8">
+          <div className="flex min-w-0 items-center gap-3">
+            <span className="text-[10px] font-semibold uppercase tracking-[0.24em] text-neutral-500">
+              Project
             </span>
-            <span className="hidden text-xs text-neutral-400 sm:inline">{project.year}</span>
+            <span className="text-xs tabular-nums tracking-[0.16em] text-white" aria-live="polite">
+              {projectCountLabel}
+            </span>
           </div>
 
           <div className="flex shrink-0 items-center gap-2">
@@ -118,8 +151,8 @@ export const ProjectLayerPopup: React.FC<ProjectLayerPopupProps> = ({
               type="button"
               onClick={() => onNavigate('prev')}
               disabled={!hasMultipleProjects}
-              aria-label="Previous project"
-              className="flex size-10 cursor-pointer items-center justify-center rounded-full border border-white/10 bg-white/5 text-white transition-colors hover:border-[#7B00FF]/60 hover:bg-[#7B00FF]/20 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#7B00FF] disabled:cursor-default disabled:opacity-30"
+              aria-label="이전 프로젝트"
+              className="flex size-10 cursor-pointer items-center justify-center rounded-full border border-white/10 bg-white/5 text-white transition-colors hover:border-white/30 hover:bg-white/10 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#B875FF] disabled:cursor-default disabled:opacity-30"
             >
               <ChevronLeft className="size-5" aria-hidden="true" />
             </button>
@@ -127,8 +160,8 @@ export const ProjectLayerPopup: React.FC<ProjectLayerPopupProps> = ({
               type="button"
               onClick={() => onNavigate('next')}
               disabled={!hasMultipleProjects}
-              aria-label="Next project"
-              className="flex size-10 cursor-pointer items-center justify-center rounded-full border border-white/10 bg-white/5 text-white transition-colors hover:border-[#7B00FF]/60 hover:bg-[#7B00FF]/20 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#7B00FF] disabled:cursor-default disabled:opacity-30"
+              aria-label="다음 프로젝트"
+              className="flex size-10 cursor-pointer items-center justify-center rounded-full border border-white/10 bg-white/5 text-white transition-colors hover:border-white/30 hover:bg-white/10 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#B875FF] disabled:cursor-default disabled:opacity-30"
             >
               <ChevronRight className="size-5" aria-hidden="true" />
             </button>
@@ -136,125 +169,280 @@ export const ProjectLayerPopup: React.FC<ProjectLayerPopupProps> = ({
               ref={closeButtonRef}
               type="button"
               onClick={onClose}
-              aria-label="Close project details"
-              className="ml-1 flex size-10 cursor-pointer items-center justify-center rounded-full border border-white/15 bg-white/10 text-white transition-colors hover:border-[#7B00FF]/70 hover:bg-[#7B00FF]/25 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#7B00FF]"
+              aria-label="프로젝트 상세 닫기"
+              className="ml-1 flex size-10 cursor-pointer items-center justify-center rounded-full border border-white/15 bg-white/10 text-white transition-colors hover:border-[#7B00FF]/70 hover:bg-[#7B00FF]/25 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#B875FF]"
             >
               <X className="size-5" aria-hidden="true" />
             </button>
           </div>
         </header>
 
-        <div className="p-5 sm:p-8 lg:p-10">
-          <div className="mb-7 sm:mb-9">
-            <div className="mb-3 flex flex-wrap items-center gap-3 text-xs uppercase tracking-[0.16em] text-[#C084FC]">
-              <span>{project.badge}</span>
-              <span className="h-px w-7 bg-[#7B00FF]" aria-hidden="true" />
-              <span>{project.edition}</span>
-            </div>
-            <h2
-              id={titleId}
-              className="text-4xl font-medium leading-[1.05] tracking-tight text-white sm:text-6xl lg:text-7xl"
-            >
-              {project.title}
-            </h2>
-          </div>
-
-          <div
-            className={`relative mb-9 aspect-[16/10] max-h-[520px] w-full overflow-hidden rounded-2xl border border-white/10 bg-gradient-to-br ${project.gradient}`}
-          >
-            <div
-              className="absolute inset-0 opacity-70"
-              style={{
-                backgroundImage: `radial-gradient(circle at 50% 48%, ${project.accent}99 0%, ${project.accent}22 30%, transparent 64%)`
-              }}
-              aria-hidden="true"
-            />
-            <div className="absolute inset-0 bg-[linear-gradient(rgba(255,255,255,0.035)_1px,transparent_1px),linear-gradient(90deg,rgba(255,255,255,0.035)_1px,transparent_1px)] bg-[size:42px_42px]" aria-hidden="true" />
-
-            <div className="absolute inset-0 flex items-center justify-center" aria-hidden="true">
-              <div
-                className="absolute size-36 rounded-full blur-3xl sm:size-52"
-                style={{ backgroundColor: project.accent, opacity: 0.55 }}
-              />
-              <div
-                className="relative flex size-28 rotate-45 items-center justify-center rounded-[2rem] border border-white/35 bg-black/20 shadow-2xl backdrop-blur-md sm:size-40"
-                style={{ boxShadow: `0 0 70px ${project.accent}66` }}
+        <main>
+          <section className="grid gap-10 px-5 pb-14 pt-8 sm:px-10 sm:pb-20 sm:pt-12 md:grid-cols-[minmax(0,0.9fr)_minmax(0,1.1fr)] md:items-center md:gap-8 lg:gap-14 lg:px-16 lg:pb-24 lg:pt-16">
+            <div className="min-w-0">
+              <h2
+                id={titleId}
+                className="text-[clamp(2.7rem,7vw,6rem)] font-medium leading-[0.98] tracking-[-0.055em] text-white md:text-[clamp(2.5rem,5vw,5.5rem)]"
               >
-                <span className="-rotate-45 text-5xl font-medium text-white sm:text-7xl">
-                  {project.title.charAt(0)}
-                </span>
-              </div>
-            </div>
-
-            <div className="absolute inset-x-4 bottom-4 flex items-end justify-between gap-4 rounded-xl border border-white/10 bg-black/55 p-4 backdrop-blur-md sm:inset-x-6 sm:bottom-6 sm:p-5">
-              <div>
-                <span className="mb-1 block text-[10px] uppercase tracking-[0.18em] text-neutral-400">Edition</span>
-                <span className="text-sm text-white sm:text-base">{project.edition}</span>
-              </div>
-              <div className="text-right">
-                <span className="mb-1 block text-[10px] uppercase tracking-[0.18em] text-neutral-400">Appreciations</span>
-                <span className="text-sm text-[#D8B4FE] sm:text-base">{project.stars}</span>
-              </div>
-            </div>
-          </div>
-
-          <div className="grid grid-cols-1 gap-8 border-t border-white/10 pt-8 md:grid-cols-3 md:gap-10">
-            <dl className="grid grid-cols-2 gap-x-5 gap-y-6 md:grid-cols-1">
-              <div>
-                <dt className="mb-1 text-[10px] uppercase tracking-[0.18em] text-neutral-500">Role</dt>
-                <dd className="text-sm leading-relaxed text-white">{project.role}</dd>
-              </div>
-              <div>
-                <dt className="mb-1 text-[10px] uppercase tracking-[0.18em] text-neutral-500">Year</dt>
-                <dd className="text-sm text-white">{project.year}</dd>
-              </div>
-              <div>
-                <dt className="mb-1 text-[10px] uppercase tracking-[0.18em] text-neutral-500">Floor Price</dt>
-                <dd className="text-sm text-[#D8B4FE]">{project.floorPrice}</dd>
-              </div>
-              <div>
-                <dt className="mb-1 text-[10px] uppercase tracking-[0.18em] text-neutral-500">Auction Price</dt>
-                <dd className="text-sm text-white">{project.auctionPrice}</dd>
-              </div>
-            </dl>
-
-            <div className="md:col-span-2">
-              <p className="mb-3 text-xs uppercase tracking-[0.2em] text-[#C084FC]">About the project</p>
+                {project.title}
+              </h2>
               <p
                 id={descriptionId}
-                className="max-w-2xl text-base leading-8 text-neutral-300 sm:text-lg sm:leading-9"
+                className="mt-7 max-w-xl break-keep text-base leading-8 text-neutral-300 sm:text-lg sm:leading-9 lg:mt-9"
               >
                 {project.description}
               </p>
             </div>
-          </div>
 
-          <footer className="mt-10 flex items-center justify-between border-t border-white/10 pt-6">
-            <button
-              type="button"
-              onClick={() => onNavigate('prev')}
-              disabled={!hasMultipleProjects}
-              className="flex cursor-pointer items-center gap-2 text-xs uppercase tracking-[0.16em] text-neutral-400 transition-colors hover:text-[#D8B4FE] focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-[#7B00FF] disabled:cursor-default disabled:opacity-30"
+            <figure className="aspect-square w-full overflow-hidden rounded-2xl border border-white/10 bg-neutral-950 shadow-[0_28px_80px_rgba(0,0,0,0.55)] sm:rounded-3xl">
+              <img
+                src={project.previewImage}
+                alt={`${project.title} 프로젝트 대표 이미지`}
+                className="size-full object-cover object-center"
+                loading="eager"
+                decoding="async"
+                draggable={false}
+              />
+            </figure>
+          </section>
+
+          <section
+            aria-label="프로젝트 기본 정보"
+            className="grid border-y border-white/10 sm:grid-cols-3"
+          >
+            <div className="border-b border-white/10 px-5 py-8 sm:border-b-0 sm:border-r sm:px-8 lg:px-10 lg:py-10">
+              <p className="text-[10px] font-semibold uppercase tracking-[0.22em] text-neutral-500">
+                Client · 발주사
+              </p>
+              <p className="mt-3 break-keep text-base leading-7 text-white lg:text-lg">
+                {project.client ?? '—'}
+              </p>
+            </div>
+
+            <div className="border-b border-white/10 px-5 py-8 sm:border-b-0 sm:border-r sm:px-8 lg:px-10 lg:py-10">
+              <p className="text-[10px] font-semibold uppercase tracking-[0.22em] text-neutral-500">
+                Year · 제작연도
+              </p>
+              <p className="mt-3 text-2xl tabular-nums text-white lg:text-3xl">{project.year}</p>
+            </div>
+
+            <div className="px-5 py-8 sm:px-8 lg:px-10 lg:py-10">
+              <p className="text-[10px] font-semibold uppercase tracking-[0.22em] text-neutral-500">
+                Contribution · 기여도
+              </p>
+              <div className="mt-4 space-y-4">
+                {(
+                  [
+                    ['기획', project.contribution.planning],
+                    ['디자인', project.contribution.design],
+                  ] as const
+                ).map(([label, value]) => {
+                  const percentage = value === null ? null : clampPercentage(value);
+
+                  return (
+                    <div key={label}>
+                      <div className="mb-2 flex items-center justify-between gap-4 text-xs">
+                        <span className="text-neutral-300">{label}</span>
+                        <span className="tabular-nums text-white">
+                          {percentage === null ? '—%' : `${percentage}%`}
+                        </span>
+                      </div>
+                      <div className="h-1 overflow-hidden rounded-full bg-white/10" aria-hidden="true">
+                        <div
+                          className="h-full rounded-full"
+                          style={{
+                            width: `${percentage ?? 0}%`,
+                            background: `linear-gradient(90deg, ${accentColor}, #C084FC)`,
+                          }}
+                        />
+                      </div>
+                    </div>
+                  );
+                })}
+              </div>
+            </div>
+          </section>
+
+          <section
+            aria-labelledby={colorTitleId}
+            className="px-5 py-20 sm:px-10 sm:py-28 lg:px-16 lg:py-32"
+          >
+            <div className="mb-10 flex items-end justify-between gap-6 sm:mb-14">
+              <div>
+                <p className="mb-3 text-[10px] font-semibold uppercase tracking-[0.24em] text-neutral-500">
+                  01
+                </p>
+                <h3 id={colorTitleId} className="text-3xl tracking-tight text-white sm:text-5xl">
+                  Color System
+                </h3>
+              </div>
+              <span className="hidden text-xs uppercase tracking-[0.18em] text-neutral-600 sm:block">
+                Brand Palette
+              </span>
+            </div>
+
+            <div className="grid gap-3 sm:grid-cols-3 sm:gap-4">
+              {project.colors.map((color) => (
+                <article
+                  key={`${color.name}-${color.hex}`}
+                  className="overflow-hidden rounded-2xl border border-white/10 bg-white/[0.025]"
+                >
+                  <div className="h-28 sm:h-36 lg:h-44" style={{ backgroundColor: color.hex }} />
+                  <div className="flex items-center justify-between gap-4 px-4 py-4 sm:px-5">
+                    <p className="text-sm text-white">{color.name}</p>
+                    <code className="text-[11px] uppercase tracking-[0.12em] text-neutral-400">
+                      {color.hex}
+                    </code>
+                  </div>
+                </article>
+              ))}
+            </div>
+          </section>
+
+          <section
+            aria-labelledby={fontTitleId}
+            className="border-y border-white/10 bg-white/[0.018] px-5 py-20 sm:px-10 sm:py-28 lg:px-16 lg:py-32"
+          >
+            <div className="mb-10 sm:mb-14">
+              <p className="mb-3 text-[10px] font-semibold uppercase tracking-[0.24em] text-neutral-500">
+                02
+              </p>
+              <h3 id={fontTitleId} className="text-3xl tracking-tight text-white sm:text-5xl">
+                Font System
+              </h3>
+            </div>
+
+            <div className="divide-y divide-white/10 border-y border-white/10">
+              {project.fonts.map((font) => (
+                <article
+                  key={`${font.family}-${font.usage}`}
+                  className="grid gap-8 py-8 sm:grid-cols-[minmax(0,1.25fr)_minmax(220px,0.75fr)] sm:items-center sm:py-10"
+                >
+                  <div className="min-w-0">
+                    <p
+                      className="truncate leading-none tracking-[-0.045em] text-white"
+                      style={
+                        font.size
+                          ? {
+                              fontSize: `clamp(${Math.max(font.size * 0.6, 19)}px, ${font.size / 10}vw, ${font.size}px)`,
+                            }
+                          : { fontSize: 'clamp(2.2rem, 6vw, 5rem)' }
+                      }
+                    >
+                      {font.family}
+                    </p>
+                    <p className="mt-4 text-xs uppercase tracking-[0.16em] text-neutral-600">
+                      Typography Family
+                    </p>
+                  </div>
+                  <div className="grid grid-cols-2 gap-5 text-sm sm:grid-cols-1 sm:gap-4">
+                    <div>
+                      <p className="text-[10px] uppercase tracking-[0.18em] text-neutral-600">Weight</p>
+                      <p className="mt-1 text-neutral-300">{font.weights}</p>
+                    </div>
+                    {font.size && (
+                      <div>
+                        <p className="text-[10px] uppercase tracking-[0.18em] text-neutral-600">Size</p>
+                        <p className="mt-1 tabular-nums text-neutral-300">{font.size}px</p>
+                      </div>
+                    )}
+                    <div>
+                      <p className="text-[10px] uppercase tracking-[0.18em] text-neutral-600">Usage</p>
+                      <p className="mt-1 text-neutral-300">{font.usage}</p>
+                    </div>
+                  </div>
+                </article>
+              ))}
+            </div>
+          </section>
+
+          {mockupImage && (
+            <section
+              aria-labelledby={mockupTitleId}
+              className="overflow-hidden px-5 pb-24 pt-20 sm:px-10 sm:pb-32 sm:pt-28 lg:px-16 lg:pb-40 lg:pt-32"
             >
-              <ChevronLeft className="size-4" aria-hidden="true" />
-              <span>Prev</span>
-            </button>
+              <div className="mb-10 sm:mb-14">
+                <p className="mb-3 text-[10px] font-semibold uppercase tracking-[0.24em] text-neutral-500">
+                  03
+                </p>
+                <h3 id={mockupTitleId} className="text-3xl tracking-tight text-white sm:text-5xl">
+                  Full Page
+                </h3>
+                <p className="mt-3 text-sm text-neutral-500">Website · Full-page View</p>
+              </div>
 
-            <span className="text-xs tracking-[0.14em] text-neutral-500" aria-live="polite">
-              {currentPosition} / {allProjects.length}
-            </span>
+              <div
+                className={`mx-auto grid max-w-5xl gap-10 ${
+                  mockupMobileImage
+                    ? 'md:grid-cols-[minmax(0,2.25fr)_minmax(180px,0.75fr)] md:items-start md:gap-5 lg:gap-7'
+                    : ''
+                }`}
+              >
+                <figure>
+                  <div className="overflow-hidden rounded-2xl border border-white/10 bg-neutral-950 shadow-[0_35px_90px_rgba(0,0,0,0.7)] sm:rounded-3xl">
+                    <img
+                      src={mockupImage}
+                      alt={`${project.title} 웹사이트 PC 전체 페이지`}
+                      className="block h-auto w-full"
+                      loading="lazy"
+                      decoding="async"
+                      draggable={false}
+                    />
+                  </div>
+                  <figcaption className="mt-4 flex items-center justify-between gap-4 text-[10px] uppercase tracking-[0.16em] text-neutral-600 sm:text-xs">
+                    <span>{project.title}</span>
+                    <span>PC Full Page</span>
+                  </figcaption>
+                </figure>
 
-            <button
-              type="button"
-              onClick={() => onNavigate('next')}
-              disabled={!hasMultipleProjects}
-              className="flex cursor-pointer items-center gap-2 text-xs uppercase tracking-[0.16em] text-neutral-400 transition-colors hover:text-[#D8B4FE] focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-[#7B00FF] disabled:cursor-default disabled:opacity-30"
-            >
-              <span>Next</span>
-              <ChevronRight className="size-4" aria-hidden="true" />
-            </button>
-          </footer>
-        </div>
+                {mockupMobileImage && (
+                  <figure>
+                    <div className="overflow-hidden rounded-2xl border border-white/10 bg-neutral-950 shadow-[0_28px_70px_rgba(0,0,0,0.62)] sm:rounded-3xl">
+                      <img
+                        src={mockupMobileImage}
+                        alt={`${project.title} 웹사이트 모바일 화면`}
+                        className="block h-auto w-full"
+                        loading="lazy"
+                        decoding="async"
+                        draggable={false}
+                      />
+                    </div>
+                    <figcaption className="mt-4 flex items-center justify-between gap-4 text-[10px] uppercase tracking-[0.16em] text-neutral-600 sm:text-xs">
+                      <span>{project.title}</span>
+                      <span>Mobile</span>
+                    </figcaption>
+                  </figure>
+                )}
+              </div>
+            </section>
+          )}
+        </main>
+
+        <footer className="flex items-center justify-between border-t border-white/10 px-5 py-6 sm:px-8">
+          <button
+            type="button"
+            onClick={() => onNavigate('prev')}
+            disabled={!hasMultipleProjects}
+            className="flex cursor-pointer items-center gap-2 text-xs uppercase tracking-[0.16em] text-neutral-400 transition-colors hover:text-white focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-[#B875FF] disabled:cursor-default disabled:opacity-30"
+          >
+            <ChevronLeft className="size-4" aria-hidden="true" />
+            <span>Prev</span>
+          </button>
+
+          <span className="text-xs tabular-nums tracking-[0.14em] text-neutral-600">
+            {projectCountLabel}
+          </span>
+
+          <button
+            type="button"
+            onClick={() => onNavigate('next')}
+            disabled={!hasMultipleProjects}
+            className="flex cursor-pointer items-center gap-2 text-xs uppercase tracking-[0.16em] text-neutral-400 transition-colors hover:text-white focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-[#B875FF] disabled:cursor-default disabled:opacity-30"
+          >
+            <span>Next</span>
+            <ChevronRight className="size-4" aria-hidden="true" />
+          </button>
+        </footer>
       </div>
 
       <style>{`
@@ -264,7 +452,7 @@ export const ProjectLayerPopup: React.FC<ProjectLayerPopupProps> = ({
         }
 
         @keyframes projectPopupPanelIn {
-          from { opacity: 0; transform: translateY(24px) scale(0.975); }
+          from { opacity: 0; transform: translateY(24px) scale(0.98); }
           to { opacity: 1; transform: translateY(0) scale(1); }
         }
 
@@ -274,7 +462,8 @@ export const ProjectLayerPopup: React.FC<ProjectLayerPopupProps> = ({
 
         .project-popup-panel {
           animation: projectPopupPanelIn 420ms cubic-bezier(0.22, 1, 0.36, 1) both;
-          scrollbar-color: #7B00FF #000000;
+          scrollbar-color: #7B00FF #080808;
+          scrollbar-gutter: stable;
         }
 
         @media (prefers-reduced-motion: reduce) {

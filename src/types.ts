@@ -21,28 +21,35 @@ export interface FeaturedProject {
 export interface ScatterProject {
   id: string;
   previewImage: string;
+  mockupImage?: string;
+  mockupMobileImage?: string;
   title: string;
   subtitle: string;
   tags: string[];
-  edition: string;
-  type: string;
-  floorPrice: string;
-  auctionPrice: string;
-  stars: number;
   gradient: string;
-  badge: string;
   description: string;
-  role: string;
+  client: string | null;
   year: string;
-  accent: string;
+  contribution: {
+    planning: number | null;
+    design: number | null;
+  };
+  colors: Array<{
+    name: string;
+    hex: string;
+  }>;
+  fonts: Array<{
+    family: string;
+    weights: string;
+    usage: string;
+    size?: number;
+  }>;
 }
 
 export interface ArchiveItem {
   id: string;
-  title: string;
-  aspectRatio: 'aspect-[3/4]' | 'aspect-[4/5]' | 'aspect-[1/1]' | 'aspect-[9/16]';
-  gradient: string;
-  tag: string;
-  overlayStyle: string;
-  accentGlow: string;
+  category: string;
+  keywords: [string, string];
+  description: string;
+  image?: string;
 }

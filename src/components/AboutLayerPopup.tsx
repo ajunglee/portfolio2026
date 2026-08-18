@@ -235,8 +235,7 @@ const AboutLayerPopup: React.FC<AboutLayerPopupProps> = ({ isOpen, onClose }) =>
           trigger,
           scroller,
           start: 'top 82%',
-          toggleActions: 'play none none none',
-          once: true,
+          toggleActions: 'play none none reverse',
           invalidateOnRefresh: true,
         });
         const clearRevealStyles = 'opacity,visibility,transform';

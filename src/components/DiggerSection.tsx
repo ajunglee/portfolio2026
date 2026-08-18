@@ -94,17 +94,13 @@ export const DiggerSection: React.FC = () => {
         setTimeout(() => {
           // Step 3: Fade the title cursor while typing the description
           setShowCursor(false);
+          setShowCta(true);
           const descInterval = setInterval(() => {
             if (descIdx < DIGGER_DESCRIPTION.length) {
               setDescText(DIGGER_DESCRIPTION.slice(0, descIdx + 1));
               descIdx++;
             } else {
               clearInterval(descInterval);
-
-              // Step 4: Show CTA Button
-              setTimeout(() => {
-                setShowCta(true);
-              }, 600);
             }
           }, 38); // 30–45ms per char
         }, 400); // 300–500ms pause

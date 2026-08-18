@@ -1,13 +1,16 @@
-import React, { useEffect, useState } from 'react';
+import React, { useCallback, useEffect, useState } from 'react';
 
 import { ARCHIVE_COLUMNS } from '../data';
 import { ArchiveItem } from '../types';
+import ArchiveLayerPopup from './ArchiveLayerPopup';
 import ViewportReveal from './ViewportReveal';
 
 export const ArchiveSection: React.FC = () => {
   const [hoveredCardId, setHoveredCardId] = useState<string | null>(null);
   const [tiltMap, setTiltMap] = useState<{ [key: string]: { rotateX: number; rotateY: number } }>({});
   const [isTouchDevice, setIsTouchDevice] = useState(false);
+  const [selectedItem, setSelectedItem] = useState<ArchiveItem | null>(null);
+  const closeArchivePopup = useCallback(() => setSelectedItem(null), []);
 
   useEffect(() => {
     if ('ontouchstart' in window || navigator.maxTouchPoints > 0) {
@@ -15,7 +18,7 @@ export const ArchiveSection: React.FC = () => {
     }
   }, []);
 
-  const handleMouseMove = (e: React.MouseEvent<HTMLDivElement>, id: string) => {
+  const handleMouseMove = (e: React.MouseEvent<HTMLButtonElement>, id: string) => {
     if (isTouchDevice) return;
     const rect = e.currentTarget.getBoundingClientRect();
     const x = e.clientX - rect.left;
@@ -74,9 +77,10 @@ export const ArchiveSection: React.FC = () => {
                     isUp ? 'animate-loop-up' : 'animate-loop-down'
                   }`}
                   style={{
-                    animationDuration: `${30 + colIdx * 3}s`,
+                    animationDuration: `${columnItems.length * 10 + colIdx * 3}s`,
                     animationTimingFunction: 'linear',
-                    animationIterationCount: 'infinite'
+                    animationIterationCount: 'infinite',
+                    animationPlayState: hoveredCardId || selectedItem ? 'paused' : 'running',
                   }}
                 >
                   {duplicatedItems.map((item, itemIdx) => {
@@ -85,12 +89,18 @@ export const ArchiveSection: React.FC = () => {
                     const isHovered = hoveredCardId === uniqueKey;
 
                     return (
-                      <div
+                      <button
+                        type="button"
                         key={uniqueKey}
                         onMouseEnter={() => setHoveredCardId(uniqueKey)}
                         onMouseMove={(e) => handleMouseMove(e, uniqueKey)}
                         onMouseLeave={() => handleMouseLeave(uniqueKey)}
-                      className={`relative w-full aspect-square rounded-xl overflow-hidden bg-gradient-to-br ${item.gradient} p-4 flex flex-col justify-end border border-white/10 shadow-xl transition-all duration-300 transform`}
+                        onFocus={() => setHoveredCardId(uniqueKey)}
+                        onBlur={() => handleMouseLeave(uniqueKey)}
+                        onClick={() => setSelectedItem(item)}
+                        aria-label={`Open ${item.category} archive detail: ${item.keywords.join(', ')}`}
+                        aria-haspopup="dialog"
+                        className="relative aspect-square w-full cursor-zoom-in overflow-hidden rounded-xl bg-black text-left shadow-xl transition-all duration-300 transform focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-white"
                         style={{
                           transform: !isTouchDevice && isHovered
                             ? `scale(1.03) rotateX(${tilt.rotateX}deg) rotateY(${tilt.rotateY}deg)`
@@ -98,26 +108,33 @@ export const ArchiveSection: React.FC = () => {
                           transformStyle: 'preserve-3d'
                         }}
                       >
-                      {/* Stylized Aesthetic Visual Shader Mesh */}
-                      <div className="absolute inset-0 bg-black/20 backdrop-blur-[2px]" />
+                        {/* Archive image */}
+                        {item.image && (
+                          <img
+                            src={item.image}
+                            alt=""
+                            className={`absolute inset-0 h-full w-full object-cover transition-transform duration-700 ease-out ${
+                              !isTouchDevice && isHovered ? 'scale-[1.12]' : 'scale-100'
+                            }`}
+                            loading="lazy"
+                            decoding="async"
+                            draggable={false}
+                            aria-hidden="true"
+                          />
+                        )}
 
-                      <div className="absolute inset-0 flex items-center justify-center opacity-60">
-                        <div
-                          className="w-32 h-32 rounded-full blur-2xl"
-                          style={{ backgroundColor: 'rgba(255,255,255,0.15)' }}
-                        />
-                      </div>
+                        <div className="pointer-events-none absolute inset-0 bg-gradient-to-t from-black/90 via-black/30 to-transparent" />
 
-                      {/* Item Bottom Overlay Label */}
-                      <div className={`relative z-10 p-3 rounded-lg ${item.overlayStyle} border border-neutral-800`}>
-                        <span className="text-[9px] uppercase tracking-widest text-[#C084FC] font-semibold block mb-0.5">
-                          {item.tag}
-                        </span>
-                        <h4 className="text-sm font-medium font-serif-display text-white truncate">
-                          {item.title}
-                        </h4>
-                      </div>
-                      </div>
+                        {/* Bottom-left category label */}
+                        <div className="absolute inset-x-3 bottom-3 z-10 sm:inset-x-4 sm:bottom-4">
+                          <h4 className="truncate text-xs font-semibold uppercase tracking-[0.18em] text-white drop-shadow-[0_2px_8px_rgba(0,0,0,0.9)] sm:text-sm">
+                            {item.category}
+                          </h4>
+                          <p className="mt-1 truncate text-[9px] tracking-[0.04em] text-white/70 drop-shadow-[0_2px_8px_rgba(0,0,0,0.9)] sm:text-[11px]">
+                            {item.keywords.join(' / ')}
+                          </p>
+                        </div>
+                      </button>
                     );
                   })}
                 </div>
@@ -144,6 +161,8 @@ export const ArchiveSection: React.FC = () => {
           animation-name: loopDown;
         }
       `}</style>
+
+      <ArchiveLayerPopup item={selectedItem} onClose={closeArchivePopup} />
     </section>
   );
 };

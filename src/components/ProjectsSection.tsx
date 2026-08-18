@@ -6,6 +6,7 @@ import ViewportReveal from './ViewportReveal';
 
 interface ProjectsSectionProps {
   onSelectScatterProject?: (proj: ScatterProject) => void;
+  onOpenProjectGallery: () => void;
 }
 
 type ProjectsMotionPhase = 'idle' | 'lead' | 'flipping' | 'holding' | 'aligning' | 'marquee';
@@ -36,7 +37,10 @@ const BASE_PROJECT_COUNT = 5;
 const MARQUEE_DURATION_SECONDS =
   (BASE_MARQUEE_DURATION_SECONDS * SCATTER_PROJECTS.length) / BASE_PROJECT_COUNT;
 
-export const ProjectsSection: React.FC<ProjectsSectionProps> = ({ onSelectScatterProject }) => {
+export const ProjectsSection: React.FC<ProjectsSectionProps> = ({
+  onSelectScatterProject,
+  onOpenProjectGallery,
+}) => {
   const showcaseRef = useRef<HTMLDivElement>(null);
   const trackRef = useRef<HTMLDivElement>(null);
   const primarySetRef = useRef<HTMLDivElement>(null);
@@ -370,6 +374,23 @@ export const ProjectsSection: React.FC<ProjectsSectionProps> = ({ onSelectScatte
                 </div>
               ))}
             </div>
+          </div>
+
+          <div className="relative z-20 col-span-full -mt-2 flex justify-center md:-mt-3 xl:-mt-4">
+            <button
+              id="projects-gallery-trigger"
+              type="button"
+              aria-haspopup="dialog"
+              aria-controls="projects-gallery-dialog"
+              onClick={onOpenProjectGallery}
+              className="group inline-flex items-center gap-3 rounded-full border border-neutral-700 bg-neutral-950/90 px-7 py-3 text-xs font-semibold tracking-[0.12em] text-white shadow-[0_12px_36px_rgba(0,0,0,0.38)] backdrop-blur-md transition-[border-color,background-color,transform,box-shadow] duration-300 hover:-translate-y-0.5 hover:border-[#9C4DFF] hover:bg-[#7B00FF] hover:shadow-[0_14px_40px_rgba(123,0,255,0.3)] focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-[#B875FF]"
+            >
+              <span>Keep digging</span>
+              <span
+                className="h-1.5 w-1.5 rounded-full bg-[#B875FF] transition-[background-color,transform] duration-300 group-hover:scale-125 group-hover:bg-white"
+                aria-hidden="true"
+              />
+            </button>
           </div>
         </div>
       </div>
