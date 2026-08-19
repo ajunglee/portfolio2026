@@ -20,6 +20,8 @@ type ProjectsOverlay =
   | { kind: 'gallery'; focusProjectId?: string }
   | { kind: 'detail'; project: ScatterProject; origin: 'page' | 'gallery' };
 
+const SHOW_FEATURED_SECTION = false;
+
 export default function App() {
   // Selected Featured project for Layer Popup
   const [selectedFeatured, setSelectedFeatured] = useState<FeaturedProject | null>(null);
@@ -145,7 +147,10 @@ export default function App() {
       </button>
 
       {/* Navigation Bar */}
-      <Navbar onOpenContactModal={handleOpenContactModal} />
+      <Navbar
+        showFeatured={SHOW_FEATURED_SECTION}
+        onOpenContactModal={handleOpenContactModal}
+      />
 
       {/* 01. Hero Section */}
       <HeroSection />
@@ -154,7 +159,9 @@ export default function App() {
       <DiggerSection />
 
       {/* 03. Featured Section */}
-      <FeaturedSection onSelectProject={(project) => setSelectedFeatured(project)} />
+      {SHOW_FEATURED_SECTION && (
+        <FeaturedSection onSelectProject={(project) => setSelectedFeatured(project)} />
+      )}
 
       {/* 04. Projects Section */}
       <ProjectsSection

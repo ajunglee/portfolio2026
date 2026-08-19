@@ -22,7 +22,12 @@ export interface ScatterProject {
   id: string;
   previewImage: string;
   mockupImage?: string;
+  mockupSecondaryImage?: string;
+  mockupIntroImage?: string;
+  mockupHoverImage?: string;
+  mockupTabletImage?: string;
   mockupMobileImage?: string;
+  mockupSitemapImage?: string;
   title: string;
   subtitle: string;
   tags: string[];
@@ -30,6 +35,7 @@ export interface ScatterProject {
   description: string;
   client: string | null;
   year: string;
+  schedule?: string;
   contribution: {
     planning: number | null;
     design: number | null;

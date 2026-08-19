@@ -4,8 +4,6 @@ import { FEATURED_PROJECTS } from '../data';
 import { FeaturedProject } from '../types';
 import ViewportReveal from './ViewportReveal';
 
-const FEATURED_VIDEO_URL = new URL('../video/featured_video.mp4', import.meta.url).href;
-
 interface FeaturedSectionProps {
   onSelectProject: (project: FeaturedProject) => void;
 }
@@ -16,7 +14,6 @@ export const FeaturedSection: React.FC<FeaturedSectionProps> = ({ onSelectProjec
   const [hasEntered, setHasEntered] = useState(false);
   const [isCarouselHovered, setIsCarouselHovered] = useState(false);
   const sectionRef = useRef<HTMLElement | null>(null);
-  const videoRef = useRef<HTMLVideoElement | null>(null);
 
   const total = FEATURED_PROJECTS.length;
 
@@ -56,26 +53,6 @@ export const FeaturedSection: React.FC<FeaturedSectionProps> = ({ onSelectProjec
     return () => observer.disconnect();
   }, []);
 
-  useEffect(() => {
-    const section = sectionRef.current;
-    const video = videoRef.current;
-    if (!section || !video) return;
-
-    const observer = new IntersectionObserver(
-      ([entry]) => {
-        if (entry.isIntersecting) {
-          void video.play().catch(() => undefined);
-        } else {
-          video.pause();
-        }
-      },
-      { threshold: 0.05 }
-    );
-
-    observer.observe(section);
-    return () => observer.disconnect();
-  }, []);
-
   // Calculate relative offset for infinite horizontal sliding
   const getOffset = (index: number) => {
     let diff = index - activeIndex;
@@ -91,19 +68,6 @@ export const FeaturedSection: React.FC<FeaturedSectionProps> = ({ onSelectProjec
       className="relative min-h-[100svh] w-full overflow-x-clip bg-black select-none xl:h-[160svh] xl:min-h-0 motion-reduce:xl:h-auto motion-reduce:xl:min-h-[100svh]"
     >
       <div className="relative min-h-[100svh] overflow-hidden py-48 md:py-72 xl:sticky xl:top-0 xl:h-[100svh] xl:min-h-0 xl:py-0 motion-reduce:xl:static motion-reduce:xl:h-auto motion-reduce:xl:min-h-[100svh] motion-reduce:xl:py-96">
-        <div className="absolute inset-0 z-0 pointer-events-none" aria-hidden="true">
-          <video
-            ref={videoRef}
-            src={FEATURED_VIDEO_URL}
-            muted
-            loop
-            playsInline
-            preload="metadata"
-            tabIndex={-1}
-            className="h-full w-full object-cover"
-          />
-        </div>
-
         <div className="portfolio-grid relative z-10 xl:h-full xl:content-center motion-reduce:xl:h-auto">
         {/* Section Title */}
         <ViewportReveal

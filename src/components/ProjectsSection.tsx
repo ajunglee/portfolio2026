@@ -4,6 +4,11 @@ import { SCATTER_PROJECTS } from '../data';
 import { ScatterProject } from '../types';
 import ViewportReveal from './ViewportReveal';
 
+const PROJECTS_BACKGROUND_VIDEO_URL = new URL(
+  '../video/featured_video.mp4',
+  import.meta.url,
+).href;
+
 interface ProjectsSectionProps {
   onSelectScatterProject?: (proj: ScatterProject) => void;
   onOpenProjectGallery: () => void;
@@ -41,6 +46,8 @@ export const ProjectsSection: React.FC<ProjectsSectionProps> = ({
   onSelectScatterProject,
   onOpenProjectGallery,
 }) => {
+  const sectionRef = useRef<HTMLElement | null>(null);
+  const backgroundVideoRef = useRef<HTMLVideoElement | null>(null);
   const showcaseRef = useRef<HTMLDivElement>(null);
   const trackRef = useRef<HTMLDivElement>(null);
   const primarySetRef = useRef<HTMLDivElement>(null);
@@ -48,6 +55,35 @@ export const ProjectsSection: React.FC<ProjectsSectionProps> = ({
   const suppressClickUntilRef = useRef(0);
   const [motionPhase, setMotionPhase] = useState<ProjectsMotionPhase>('idle');
   const [isDragging, setIsDragging] = useState(false);
+
+  useEffect(() => {
+    const section = sectionRef.current;
+    const video = backgroundVideoRef.current;
+    if (!section || !video) return;
+
+    if (!('IntersectionObserver' in window)) {
+      void video.play().catch(() => undefined);
+      return () => video.pause();
+    }
+
+    const observer = new IntersectionObserver(
+      ([entry]) => {
+        if (entry.isIntersecting) {
+          void video.play().catch(() => undefined);
+        } else {
+          video.pause();
+        }
+      },
+      { threshold: 0.05 },
+    );
+
+    observer.observe(section);
+
+    return () => {
+      observer.disconnect();
+      video.pause();
+    };
+  }, []);
 
   useEffect(() => {
     const showcase = showcaseRef.current;
@@ -320,10 +356,24 @@ export const ProjectsSection: React.FC<ProjectsSectionProps> = ({
   return (
     <section
       id="projects"
+      ref={sectionRef}
       className="relative min-h-[100svh] w-full overflow-x-clip bg-black xl:h-[160svh] xl:min-h-0 motion-reduce:xl:h-auto motion-reduce:xl:min-h-[100svh]"
     >
       <div className="relative min-h-[100svh] overflow-hidden py-48 md:py-72 xl:sticky xl:top-0 xl:h-[100svh] xl:min-h-0 xl:py-0 motion-reduce:xl:static motion-reduce:xl:h-auto motion-reduce:xl:min-h-[100svh] motion-reduce:xl:py-96">
-        <div className="portfolio-grid xl:h-full xl:content-center motion-reduce:xl:h-auto">
+        <div className="pointer-events-none absolute inset-0 z-0" aria-hidden="true">
+          <video
+            ref={backgroundVideoRef}
+            src={PROJECTS_BACKGROUND_VIDEO_URL}
+            muted
+            loop
+            playsInline
+            preload="metadata"
+            tabIndex={-1}
+            className="h-full w-full object-cover"
+          />
+        </div>
+
+        <div className="portfolio-grid relative z-10 xl:h-full xl:content-center motion-reduce:xl:h-auto">
           <ViewportReveal
             className="projects-title-reveal relative z-10 col-span-full mb-16 text-center md:mb-20 xl:mb-20 2xl:mb-24"
             distance={{ mobile: 80, desktop: 170 }}

@@ -3,10 +3,14 @@ import React, { useState, useEffect } from 'react';
 const LOGO_IMAGE_URL = new URL('../images/logo.png', import.meta.url).href;
 
 interface NavbarProps {
+  showFeatured?: boolean;
   onOpenContactModal?: () => void;
 }
 
-export const Navbar: React.FC<NavbarProps> = ({ onOpenContactModal }) => {
+export const Navbar: React.FC<NavbarProps> = ({
+  showFeatured = true,
+  onOpenContactModal,
+}) => {
   const [scrolled, setScrolled] = useState(false);
 
   useEffect(() => {
@@ -57,12 +61,14 @@ export const Navbar: React.FC<NavbarProps> = ({ onOpenContactModal }) => {
           >
             About
           </button>
-          <button
-            onClick={() => scrollToSection('featured')}
-            className="hover:text-[#D8B4FE] transition-colors cursor-pointer focus:outline-none"
-          >
-            Featured
-          </button>
+          {showFeatured && (
+            <button
+              onClick={() => scrollToSection('featured')}
+              className="hover:text-[#D8B4FE] transition-colors cursor-pointer focus:outline-none"
+            >
+              Featured
+            </button>
+          )}
           <button
             onClick={() => scrollToSection('projects')}
             className="hover:text-[#D8B4FE] transition-colors cursor-pointer focus:outline-none"

@@ -14,6 +14,9 @@ const PROJECT_PREVIEW_URLS = [
   new URL('./images/project_img3.png', import.meta.url).href,
   new URL('./images/project_img4.png', import.meta.url).href,
   new URL('./images/project_img5.png', import.meta.url).href,
+  new URL('./images/project_img6.png', import.meta.url).href,
+  new URL('./images/project_img7.png', import.meta.url).href,
+  new URL('./images/project_img8.png', import.meta.url).href,
 ] as const;
 const PROJECT_JONGNO_FULLPAGE_URL = new URL(
   './images/project_con_jongno.jpg',
@@ -21,6 +24,74 @@ const PROJECT_JONGNO_FULLPAGE_URL = new URL(
 ).href;
 const PROJECT_JONGNO_MOBILE_URL = new URL(
   './images/project_con_jongno_m.png',
+  import.meta.url,
+).href;
+const PROJECT_GT_FULLPAGE_URL = new URL(
+  './images/project_con_GT_pc.jpg',
+  import.meta.url,
+).href;
+const PROJECT_GT_INTRO_URL = new URL(
+  './images/project_con_GT_intro.jpg',
+  import.meta.url,
+).href;
+const PROJECT_GT_MOBILE_URL = new URL(
+  './images/project_con_GT_m.jpg',
+  import.meta.url,
+).href;
+const PROJECT_AI_SCHOOL_FULLPAGE_URL = new URL(
+  './images/project_con_AiSchool_pc.jpg',
+  import.meta.url,
+).href;
+const PROJECT_AI_SCHOOL_TABLET_URL = new URL(
+  './images/project_con_AiSchool_tab.jpg',
+  import.meta.url,
+).href;
+const PROJECT_AI_SCHOOL_MOBILE_URL = new URL(
+  './images/project_con_AiSchool_m.png',
+  import.meta.url,
+).href;
+const PROJECT_FUTURE_DESKTOP_URL = new URL(
+  './images/project_con_future_pc.jpg',
+  import.meta.url,
+).href;
+const PROJECT_FUTURE_DESKTOP_HOVER_URL = new URL(
+  './images/project_con_future_pc_hover.jpg',
+  import.meta.url,
+).href;
+const PROJECT_FUTURE_MOBILE_URL = new URL(
+  './images/project_con_future_m.jpg',
+  import.meta.url,
+).href;
+const PROJECT_FAIR_DESKTOP_URL = new URL(
+  './images/project_con_Fair_pc.jpg',
+  import.meta.url,
+).href;
+const PROJECT_FAIR_MOBILE_URL = new URL(
+  './images/project_con_Fair_m.jpg',
+  import.meta.url,
+).href;
+const PROJECT_FAIR_SITEMAP_URL = new URL(
+  './images/project_con_Fair_sitemap.jpg',
+  import.meta.url,
+).href;
+const PROJECT_CERTI_FULLPAGE_01_URL = new URL(
+  './images/project_con_certi1.jpg',
+  import.meta.url,
+).href;
+const PROJECT_CERTI_FULLPAGE_02_URL = new URL(
+  './images/project_con_certi2.png',
+  import.meta.url,
+).href;
+const PROJECT_SANGROK_DESKTOP_URL = new URL(
+  './images/project_con_sangrok_pc.jpg',
+  import.meta.url,
+).href;
+const PROJECT_SANGROK_TABLET_URL = new URL(
+  './images/project_con_sangrok_tab.png',
+  import.meta.url,
+).href;
+const PROJECT_SANGROK_MOBILE_URL = new URL(
+  './images/project_con_sangrok_m.png',
   import.meta.url,
 ).href;
 const ARCHIVE_FASHION_URLS = [
@@ -44,6 +115,26 @@ const ARCHIVE_PROMOTION_URLS = [
   new URL('./images/promotion4.png', import.meta.url).href,
   new URL('./images/promotion5.png', import.meta.url).href,
 ] as const;
+const PRETENDARD_FONT_SYSTEM: ScatterProject['fonts'] = [
+  {
+    family: 'Pretendard',
+    weights: 'Bold',
+    usage: 'Heading 1',
+    size: 60,
+  },
+  {
+    family: 'Pretendard',
+    weights: 'Bold',
+    usage: 'Heading 2',
+    size: 40,
+  },
+  {
+    family: 'Pretendard',
+    weights: 'Bold',
+    usage: 'Heading 3',
+    size: 32,
+  },
+];
 
 export const HERO_CATEGORIES = [
   { id: 'web-ui', label: 'Web UI/UX', targetId: 'featured' },
@@ -123,44 +214,43 @@ export const SCATTER_PROJECTS: ScatterProject[] = [
   {
     id: 'proj-1',
     previewImage: PROJECT_PREVIEW_URLS[0],
-    title: 'BtoB',
+    title: 'BtoB플랫폼',
     subtitle: '스마트 산업 지원 통합 플랫폼',
     tags: ['Web', 'UI/UX', 'Responsive'],
     gradient: 'from-fuchsia-950/80 via-purple-900/60 to-black',
-    description: '스마트 산업을 준비하는 기업이 사업 정보와 시설·장비 지원을 한곳에서 탐색할 수 있도록 설계한 반응형 통합 플랫폼입니다.',
-    client: null,
-    year: '2026',
+    description: '기업과 개발자를 대상으로 기술지원 서비스와 연구 인프라를 통합 제공하는 B2B 플랫폼 리뉴얼 프로젝트입니다. 참여기업 신청부터 전문가 등록, 장비·시설 예약까지 다양한 서비스를 보다 쉽고 직관적으로 이용할 수 있도록 사용자 경험을 개선했습니다.',
+    client: '한국정보기술연구원(KITRI)',
+    year: '2025',
+    schedule: '2025년',
     contribution: { planning: null, design: null },
     colors: [
-      { name: 'Core Blue', hex: '#5D63F2' },
-      { name: 'Smart Mint', hex: '#49DDB1' },
-      { name: 'Deep Ink', hex: '#111318' },
+      { name: 'Main', hex: '#0435B2' },
+      { name: 'Sub 01', hex: '#249984' },
+      { name: 'Sub 02', hex: '#9400D3' },
     ],
-    fonts: [
-      { family: 'Pretendard', weights: '400 · 600 · 800', usage: 'Headline · Body · UI' },
-      { family: 'Inter', weights: '500 · 700', usage: 'Number · English' },
-    ],
+    fonts: PRETENDARD_FONT_SYSTEM,
   },
   {
     id: 'proj-2',
     previewImage: PROJECT_PREVIEW_URLS[1],
+    mockupImage: PROJECT_GT_FULLPAGE_URL,
+    mockupIntroImage: PROJECT_GT_INTRO_URL,
+    mockupMobileImage: PROJECT_GT_MOBILE_URL,
     title: 'GT온라인',
     subtitle: '글로벌 기술협력 모바일 플랫폼',
     tags: ['Mobile', 'UI/UX', 'Global'],
     gradient: 'from-purple-950/90 via-indigo-950/70 to-slate-950',
-    description: '국내 기업의 글로벌 기술협력과 사업화 정보를 한국어와 영어로 빠르게 탐색할 수 있도록 구성한 모바일 중심 플랫폼입니다.',
-    client: null,
+    description: '국내 기업과 해외 기술 전문가를 연결하는 기술협력 플랫폼으로, 국제 공동 R&D와 기술 컨설팅 지원을 위한 다양한 정보를 제공합니다. 사업 안내부터 전문가 탐색, 기술 네트워크, 공고 및 신청 기능까지 통합 제공하여 사용자가 필요한 정보를 효율적으로 탐색하고 협업할 수 있도록 지원하는 서비스입니다.',
+    client: '한국산업기술진흥원',
     year: '2025',
+    schedule: '2025년 6월 ~ 2025년 12월',
     contribution: { planning: null, design: null },
     colors: [
-      { name: 'Global Orange', hex: '#FF5A1F' },
-      { name: 'Cooperation Purple', hex: '#5B2A86' },
-      { name: 'Charcoal', hex: '#202124' },
+      { name: 'Main', hex: '#5000B7' },
+      { name: 'Sub 01', hex: '#00CFFF' },
+      { name: 'Sub 02', hex: '#FF5B00' },
     ],
-    fonts: [
-      { family: 'Pretendard', weights: '400 · 600 · 700', usage: 'Headline · Body · UI' },
-      { family: 'Inter', weights: '500 · 700', usage: 'English · Number' },
-    ],
+    fonts: PRETENDARD_FONT_SYSTEM,
   },
   {
     id: 'proj-3',
@@ -171,142 +261,127 @@ export const SCATTER_PROJECTS: ScatterProject[] = [
     subtitle: '종로 문화예술 정보 플랫폼',
     tags: ['Web', 'UI/UX', 'Culture'],
     gradient: 'from-blue-950/90 via-purple-950/80 to-black',
-    description: '종로의 문화예술 행사와 공간, 단체 정보를 키워드 검색과 맞춤형 탐색 경험으로 연결한 지역 문화 플랫폼입니다.',
-    client: null,
-    year: '2026',
+    description: "기존 '종로엔 다있다'는 역사·관광 중심 콘텐츠에 한정되어 있었고, 노후화된 시스템으로 인해 새로운 기능과 콘텐츠를 확장하는 데 한계가 있었습니다. 또한 종로구 곳곳에 분산된 공연, 전시, 축제, 문화유산 정보를 하나의 플랫폼에서 통합 제공하고, 예술인과 이용자가 직접 참여하는 양방향 문화예술 플랫폼 구축의 필요성이 제기되었습니다.",
+    client: '서울특별시 종로구',
+    year: '2025',
+    schedule: '2025년',
     contribution: { planning: null, design: null },
     colors: [
       { name: 'Main · Christalle', hex: '#33036B' },
       { name: 'Sub · Alizarin', hex: '#D32730' },
       { name: 'Sub · Golden Yellow', hex: '#FFDF00' },
     ],
-    fonts: [
-      {
-        family: 'Pretendard',
-        weights: 'Bold',
-        usage: 'Heading 1',
-        size: 60,
-      },
-      {
-        family: 'Pretendard',
-        weights: 'Bold',
-        usage: 'Heading 2',
-        size: 40,
-      },
-      {
-        family: 'Pretendard',
-        weights: 'Bold',
-        usage: 'Heading 3',
-        size: 32,
-      },
-    ],
+    fonts: PRETENDARD_FONT_SYSTEM,
   },
   {
     id: 'proj-4',
     previewImage: PROJECT_PREVIEW_URLS[3],
-    title: '경남교육청 미래교육원',
+    mockupImage: PROJECT_FUTURE_DESKTOP_URL,
+    mockupHoverImage: PROJECT_FUTURE_DESKTOP_HOVER_URL,
+    mockupMobileImage: PROJECT_FUTURE_MOBILE_URL,
+    title: '경남교육청 미래교육원 체험누리집',
     subtitle: '체험 중심 미래교육 플랫폼',
     tags: ['Web', 'UI/UX', 'Education'],
     gradient: 'from-cyan-950/90 via-blue-950/70 to-zinc-950',
-    description: '미래교육 체험 예약부터 공간 안내까지 학생과 교사가 필요한 정보를 직관적으로 찾도록 설계한 교육 플랫폼입니다.',
-    client: null,
-    year: '2025',
+    description: '기존 체험누리집은 지속적인 유지관리와 함께 예약 서비스, 체험맵, 콘텐츠 관리 기능의 개선이 필요했으며, 변화하는 서비스 환경과 사용자 요구를 반영한 기능 고도화가 요구되었습니다. 또한 웹 접근성·웹 표준 준수와 개인정보 보호, 관리자 운영 효율성 향상을 위한 전반적인 개선이 필요하여 프로젝트가 추진되었습니다.',
+    client: '경남교육청',
+    year: '2026',
+    schedule: '2026년',
     contribution: { planning: null, design: null },
     colors: [
-      { name: 'Future Green', hex: '#98D92F' },
-      { name: 'Learning Blue', hex: '#2388D8' },
-      { name: 'Graphite', hex: '#17191D' },
+      { name: 'Main', hex: '#0068FF' },
+      { name: 'Sub 01', hex: '#5D57EB' },
+      { name: 'Sub 02', hex: '#219F73' },
     ],
-    fonts: [
-      { family: 'Pretendard', weights: '400 · 600 · 700', usage: 'Body · UI' },
-      { family: 'Gmarket Sans', weights: '500 · 700', usage: 'Headline · Key Message' },
-    ],
+    fonts: PRETENDARD_FONT_SYSTEM,
   },
   {
     id: 'proj-5',
     previewImage: PROJECT_PREVIEW_URLS[4],
+    mockupImage: PROJECT_AI_SCHOOL_FULLPAGE_URL,
+    mockupTabletImage: PROJECT_AI_SCHOOL_TABLET_URL,
+    mockupMobileImage: PROJECT_AI_SCHOOL_MOBILE_URL,
     title: '인공지능사관학교',
     subtitle: 'AI 인재 양성 교육 플랫폼',
     tags: ['Mobile', 'UI/UX', 'Education'],
     gradient: 'from-purple-900/80 via-pink-950/60 to-black',
-    description: 'AI 교육 과정과 역량 진단, 시설·멘토 정보를 모바일에서도 빠르게 이용할 수 있도록 정리한 교육 플랫폼입니다.',
-    client: null,
-    year: '2026',
+    description: '기존 교육 안내 중심의 정보 제공에서 벗어나 교육 → 실습 → 취·창업 → 성과 확산으로 이어지는 성장 과정을 효과적으로 전달하고, AI 교육기관의 전문성과 청년 친화적인 브랜드 이미지를 강화하기 위해 메인페이지 리디자인을 제안하였습니다.',
+    client: '인공지능산업융합사업단(AICA)',
+    year: '2025',
+    schedule: '2025년',
     contribution: { planning: null, design: null },
     colors: [
-      { name: 'AI Blue', hex: '#168DE2' },
-      { name: 'Growth Orange', hex: '#F28B24' },
-      { name: 'Midnight', hex: '#111827' },
+      { name: 'Main', hex: '#275CAB' },
+      { name: 'Sub 01', hex: '#008AFF' },
+      { name: 'Sub 02', hex: '#F36F21' },
     ],
-    fonts: [
-      { family: 'Pretendard', weights: '400 · 600 · 800', usage: 'Headline · Body · UI' },
-      { family: 'Montserrat', weights: '600 · 700', usage: 'English · Number' },
-    ],
+    fonts: PRETENDARD_FONT_SYSTEM,
   },
   {
     id: 'proj-6',
-    previewImage: PROJECT_PREVIEW_URLS[0],
-    title: '스마트산업지원센터',
-    subtitle: '스마트 산업 지원 웹사이트 리뉴얼',
-    tags: ['Web', 'Renewal', 'Responsive'],
-    gradient: 'from-violet-950/80 via-indigo-900/60 to-black',
-    description: '기업별 지원 프로그램과 입주·시설 정보를 명확한 정보 구조로 재정비한 스마트산업지원센터 반응형 웹사이트입니다.',
-    client: null,
-    year: '2026',
+    previewImage: PROJECT_PREVIEW_URLS[5],
+    mockupImage: PROJECT_FAIR_DESKTOP_URL,
+    mockupMobileImage: PROJECT_FAIR_MOBILE_URL,
+    mockupSitemapImage: PROJECT_FAIR_SITEMAP_URL,
+    title: '제12회 도시농업박람회',
+    subtitle: '일상 속 도시농업 체험형 박람회',
+    tags: ['Web', 'UI/UX', 'Exhibition'],
+    gradient: 'from-orange-950/90 via-amber-950/70 to-stone-950',
+    description: '도시농업을 일상 속 문화로 확산하기 위해 기존의 전시 중심 박람회에서 벗어나 집, 학교, 회사, 공원 등 생활공간을 테마로 한 체험형 전시를 기획했습니다. 관람객이 도시농업을 직접 경험하고 공감할 수 있는 콘텐츠를 통해 도시농업의 긍정적인 가치를 전달하는 것을 목표로 했습니다.',
+    client: '모두가도시농부, 브랜드쿡',
+    year: '2023',
+    schedule: '2023년',
     contribution: { planning: null, design: null },
     colors: [
-      { name: 'Core Blue', hex: '#5D63F2' },
-      { name: 'Smart Mint', hex: '#49DDB1' },
-      { name: 'Deep Ink', hex: '#111318' },
+      { name: 'Main', hex: '#FE5722' },
+      { name: 'Sub 01', hex: '#FFAA35' },
+      { name: 'Sub 02', hex: '#5B3913' },
     ],
-    fonts: [
-      { family: 'Pretendard', weights: '400 · 600 · 800', usage: 'Headline · Body · UI' },
-      { family: 'Inter', weights: '500 · 700', usage: 'English · Data' },
-    ],
+    fonts: PRETENDARD_FONT_SYSTEM,
   },
   {
     id: 'proj-7',
-    previewImage: PROJECT_PREVIEW_URLS[1],
-    title: '글로벌기술협력센터',
-    subtitle: '글로벌 기술협력 모바일 웹',
-    tags: ['Mobile', 'Global', 'UI/UX'],
-    gradient: 'from-orange-950/80 via-neutral-900/70 to-black',
-    description: '국제 기술교류와 협력 사업 정보를 다국어 환경에서 빠르게 확인할 수 있도록 설계한 모바일 퍼스트 웹사이트입니다.',
-    client: null,
-    year: '2025',
+    previewImage: PROJECT_PREVIEW_URLS[6],
+    mockupImage: PROJECT_CERTI_FULLPAGE_01_URL,
+    mockupSecondaryImage: PROJECT_CERTI_FULLPAGE_02_URL,
+    title: '한국생산성본부인증원',
+    subtitle: '인증 서비스 브랜드 경험 리뉴얼',
+    tags: ['BX', 'Web', 'UI/UX'],
+    gradient: 'from-rose-950/90 via-blue-950/70 to-slate-950',
+    description: '한국생산성본부인증원(KPCQA)의 브랜드 아이덴티티를 강화하기 위해 메인페이지를 리뉴얼한 BX 프로젝트입니다. 기존의 공공기관 중심 UI에서 벗어나, 인증 서비스의 전문성과 신뢰성을 현대적인 브랜드 경험으로 전달하는 것을 목표로 디자인을 제안했습니다.',
+    client: '한국생산성본부인증원',
+    year: '2026',
+    schedule: '2026년 8월',
     contribution: { planning: null, design: null },
     colors: [
-      { name: 'Global Orange', hex: '#FF5A1F' },
-      { name: 'Cooperation Purple', hex: '#5B2A86' },
-      { name: 'Charcoal', hex: '#202124' },
+      { name: 'Main', hex: '#EE3048' },
+      { name: 'Sub 01', hex: '#2F6BFF' },
+      { name: 'Sub 02', hex: '#21376B' },
     ],
-    fonts: [
-      { family: 'Pretendard', weights: '400 · 600 · 700', usage: 'Headline · Body · UI' },
-      { family: 'Inter', weights: '500 · 700', usage: 'English · Number' },
-    ],
+    fonts: PRETENDARD_FONT_SYSTEM,
   },
   {
     id: 'proj-8',
-    previewImage: PROJECT_PREVIEW_URLS[4],
-    title: 'AI 교육 플랫폼',
-    subtitle: 'AI 기반 디지털 학습 플랫폼',
-    tags: ['Web', 'AI', 'Education'],
-    gradient: 'from-sky-950/80 via-blue-900/60 to-black',
-    description: '학습 과정과 교육 자료, 진로 정보를 하나의 흐름으로 연결해 AI 인재의 성장을 돕는 디지털 학습 플랫폼입니다.',
-    client: null,
-    year: '2026',
+    previewImage: PROJECT_PREVIEW_URLS[7],
+    mockupImage: PROJECT_SANGROK_DESKTOP_URL,
+    mockupTabletImage: PROJECT_SANGROK_TABLET_URL,
+    mockupMobileImage: PROJECT_SANGROK_MOBILE_URL,
+    title: '공무원연금공단 복지시설(상록골프앤리조트)',
+    subtitle: '복지시설 통합 웹사이트 리뉴얼',
+    tags: ['Web', 'UI/UX', 'Responsive'],
+    gradient: 'from-red-950/90 via-neutral-950/75 to-black',
+    description: '기존 홈페이지는 노후화된 UI와 낮은 시각적 완성도로 인해 정보 전달력과 사용자 만족도가 떨어지고 있었습니다. 또한 시설별 콘텐츠가 일관성 없이 제공되어 서비스 인지도와 접근성이 낮아, 콘텐츠 중심의 정보 구조와 현대적인 사용자 경험으로 개선하는 프로젝트가 추진되었습니다.',
+    client: '공무원연금공단',
+    year: '2025',
+    schedule: '2025년 8월',
     contribution: { planning: null, design: null },
     colors: [
-      { name: 'AI Blue', hex: '#168DE2' },
-      { name: 'Growth Orange', hex: '#F28B24' },
-      { name: 'Midnight', hex: '#111827' },
+      { name: 'Main', hex: '#E63927' },
+      { name: 'Sub', hex: '#1E2124' },
     ],
-    fonts: [
-      { family: 'Pretendard', weights: '400 · 600 · 800', usage: 'Headline · Body · UI' },
-      { family: 'Montserrat', weights: '600 · 700', usage: 'English · Number' },
-    ],
+    fonts: PRETENDARD_FONT_SYSTEM,
   }
-];
+].sort((projectA, projectB) => Number(projectB.year) - Number(projectA.year));
 
 export const ARCHIVE_COLUMNS: ArchiveItem[][] = [
   // Column 1

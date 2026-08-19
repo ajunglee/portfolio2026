@@ -112,7 +112,24 @@ export const ProjectLayerPopup: React.FC<ProjectLayerPopupProps> = ({
   const mockupTitleId = `project-popup-mockup-title-${project.id}`;
   const accentColor = project.colors[0]?.hex ?? '#7B00FF';
   const mockupImage = project.mockupImage;
+  const mockupSecondaryImage = project.mockupSecondaryImage;
+  const mockupIntroImage = project.mockupIntroImage;
+  const mockupHoverImage = project.mockupHoverImage;
+  const mockupTabletImage = project.mockupTabletImage;
   const mockupMobileImage = project.mockupMobileImage;
+  const mockupSitemapImage = project.mockupSitemapImage;
+  const hasIntroMockupSet = Boolean(mockupIntroImage && mockupMobileImage);
+  const hasResponsiveMockupSet = Boolean(mockupTabletImage && mockupMobileImage);
+  const hasHoverMockupSet = Boolean(mockupHoverImage && mockupMobileImage);
+  const hasSitemapMockupSet = Boolean(mockupSitemapImage && mockupMobileImage);
+  const hasSideBySideMockupSet = Boolean(mockupSecondaryImage);
+  const mockupGridClass = hasHoverMockupSet || hasSitemapMockupSet
+    ? 'md:grid-cols-[minmax(0,2.2fr)_minmax(220px,0.8fr)] md:items-start md:gap-6 lg:gap-8'
+    : hasIntroMockupSet || hasResponsiveMockupSet || hasSideBySideMockupSet
+      ? 'md:grid-cols-2 md:items-start md:gap-6 lg:gap-8'
+    : mockupMobileImage
+      ? 'md:grid-cols-[minmax(0,2.25fr)_minmax(180px,0.75fr)] md:items-start md:gap-5 lg:gap-7'
+      : '';
   const projectCountLabel = `${String(currentPosition).padStart(2, '0')} / ${String(
     allProjects.length,
   ).padStart(2, '0')}`;
@@ -221,9 +238,11 @@ export const ProjectLayerPopup: React.FC<ProjectLayerPopupProps> = ({
 
             <div className="border-b border-white/10 px-5 py-8 sm:border-b-0 sm:border-r sm:px-8 lg:px-10 lg:py-10">
               <p className="text-[10px] font-semibold uppercase tracking-[0.22em] text-neutral-500">
-                Year · 제작연도
+                Schedule · 작업일정
               </p>
-              <p className="mt-3 text-2xl tabular-nums text-white lg:text-3xl">{project.year}</p>
+              <p className="mt-3 break-keep text-xl tabular-nums text-white lg:text-2xl">
+                {project.schedule ?? project.year}
+              </p>
             </div>
 
             <div className="px-5 py-8 sm:px-8 lg:px-10 lg:py-10">
@@ -371,18 +390,20 @@ export const ProjectLayerPopup: React.FC<ProjectLayerPopupProps> = ({
                 <p className="mt-3 text-sm text-neutral-500">Website · Full-page View</p>
               </div>
 
-              <div
-                className={`mx-auto grid max-w-5xl gap-10 ${
-                  mockupMobileImage
-                    ? 'md:grid-cols-[minmax(0,2.25fr)_minmax(180px,0.75fr)] md:items-start md:gap-5 lg:gap-7'
-                    : ''
-                }`}
-              >
-                <figure>
+              <div className={`mx-auto grid max-w-5xl gap-10 ${mockupGridClass}`}>
+                <figure
+                  className={
+                    hasIntroMockupSet || hasResponsiveMockupSet
+                      ? 'md:col-span-2'
+                      : hasHoverMockupSet || hasSitemapMockupSet
+                        ? 'md:col-start-1 md:row-start-1'
+                        : undefined
+                  }
+                >
                   <div className="overflow-hidden rounded-2xl border border-white/10 bg-neutral-950 shadow-[0_35px_90px_rgba(0,0,0,0.7)] sm:rounded-3xl">
                     <img
                       src={mockupImage}
-                      alt={`${project.title} 웹사이트 PC 전체 페이지`}
+                      alt={`${project.title} 웹사이트 ${hasSitemapMockupSet ? 'PC 메인 화면' : 'PC 전체 페이지'}`}
                       className="block h-auto w-full"
                       loading="lazy"
                       decoding="async"
@@ -391,12 +412,100 @@ export const ProjectLayerPopup: React.FC<ProjectLayerPopupProps> = ({
                   </div>
                   <figcaption className="mt-4 flex items-center justify-between gap-4 text-[10px] uppercase tracking-[0.16em] text-neutral-600 sm:text-xs">
                     <span>{project.title}</span>
-                    <span>PC Full Page</span>
+                    <span>
+                      {hasHoverMockupSet || hasSitemapMockupSet
+                        ? 'PC Default'
+                        : hasSideBySideMockupSet
+                          ? 'PC Full Page 01'
+                          : 'PC Full Page'}
+                    </span>
                   </figcaption>
                 </figure>
 
-                {mockupMobileImage && (
+                {mockupSecondaryImage && (
                   <figure>
+                    <div className="overflow-hidden rounded-2xl border border-white/10 bg-neutral-950 shadow-[0_28px_70px_rgba(0,0,0,0.62)] sm:rounded-3xl">
+                      <img
+                        src={mockupSecondaryImage}
+                        alt={`${project.title} 웹사이트 PC 전체 페이지 두 번째 화면`}
+                        className="block h-auto w-full"
+                        loading="lazy"
+                        decoding="async"
+                        draggable={false}
+                      />
+                    </div>
+                    <figcaption className="mt-4 flex items-center justify-between gap-4 text-[10px] uppercase tracking-[0.16em] text-neutral-600 sm:text-xs">
+                      <span>{project.title}</span>
+                      <span>PC Full Page 02</span>
+                    </figcaption>
+                  </figure>
+                )}
+
+                {mockupIntroImage && (
+                  <figure>
+                    <div className="overflow-hidden rounded-2xl border border-white/10 bg-neutral-950 shadow-[0_28px_70px_rgba(0,0,0,0.62)] sm:rounded-3xl">
+                      <img
+                        src={mockupIntroImage}
+                        alt={`${project.title} 웹사이트 PC 인트로 화면`}
+                        className="block h-auto w-full"
+                        loading="lazy"
+                        decoding="async"
+                        draggable={false}
+                      />
+                    </div>
+                    <figcaption className="mt-4 flex items-center justify-between gap-4 text-[10px] uppercase tracking-[0.16em] text-neutral-600 sm:text-xs">
+                      <span>{project.title}</span>
+                      <span>PC Intro</span>
+                    </figcaption>
+                  </figure>
+                )}
+
+                {mockupHoverImage && (
+                  <figure className="md:col-start-1 md:row-start-2">
+                    <div className="overflow-hidden rounded-2xl border border-white/10 bg-neutral-950 shadow-[0_28px_70px_rgba(0,0,0,0.62)] sm:rounded-3xl">
+                      <img
+                        src={mockupHoverImage}
+                        alt={`${project.title} 웹사이트 PC 호버 화면`}
+                        className="block h-auto w-full"
+                        loading="lazy"
+                        decoding="async"
+                        draggable={false}
+                      />
+                    </div>
+                    <figcaption className="mt-4 flex items-center justify-between gap-4 text-[10px] uppercase tracking-[0.16em] text-neutral-600 sm:text-xs">
+                      <span>{project.title}</span>
+                      <span>PC Hover</span>
+                    </figcaption>
+                  </figure>
+                )}
+
+                {mockupTabletImage && (
+                  <figure>
+                    <div className="overflow-hidden rounded-2xl border border-white/10 bg-neutral-950 shadow-[0_28px_70px_rgba(0,0,0,0.62)] sm:rounded-3xl">
+                      <img
+                        src={mockupTabletImage}
+                        alt={`${project.title} 웹사이트 태블릿 화면`}
+                        className="block h-auto w-full"
+                        loading="lazy"
+                        decoding="async"
+                        draggable={false}
+                      />
+                    </div>
+                    <figcaption className="mt-4 flex items-center justify-between gap-4 text-[10px] uppercase tracking-[0.16em] text-neutral-600 sm:text-xs">
+                      <span>{project.title}</span>
+                      <span>Tablet</span>
+                    </figcaption>
+                  </figure>
+                )}
+
+                {mockupMobileImage && (
+                  <figure
+                    className={
+                      hasHoverMockupSet || hasSitemapMockupSet
+                        ? 'w-full md:col-start-2 md:row-span-2 md:row-start-1 md:self-start'
+                        : undefined
+                    }
+                  >
                     <div className="overflow-hidden rounded-2xl border border-white/10 bg-neutral-950 shadow-[0_28px_70px_rgba(0,0,0,0.62)] sm:rounded-3xl">
                       <img
                         src={mockupMobileImage}
@@ -410,6 +519,25 @@ export const ProjectLayerPopup: React.FC<ProjectLayerPopupProps> = ({
                     <figcaption className="mt-4 flex items-center justify-between gap-4 text-[10px] uppercase tracking-[0.16em] text-neutral-600 sm:text-xs">
                       <span>{project.title}</span>
                       <span>Mobile</span>
+                    </figcaption>
+                  </figure>
+                )}
+
+                {mockupSitemapImage && (
+                  <figure className="md:col-start-1 md:row-start-2">
+                    <div className="overflow-hidden rounded-2xl border border-white/10 bg-neutral-950 shadow-[0_28px_70px_rgba(0,0,0,0.62)] sm:rounded-3xl">
+                      <img
+                        src={mockupSitemapImage}
+                        alt={`${project.title} 웹사이트 사이트맵 화면`}
+                        className="block h-auto w-full"
+                        loading="lazy"
+                        decoding="async"
+                        draggable={false}
+                      />
+                    </div>
+                    <figcaption className="mt-4 flex items-center justify-between gap-4 text-[10px] uppercase tracking-[0.16em] text-neutral-600 sm:text-xs">
+                      <span>{project.title}</span>
+                      <span>Sitemap</span>
                     </figcaption>
                   </figure>
                 )}
