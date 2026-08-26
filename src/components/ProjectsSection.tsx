@@ -55,6 +55,7 @@ export const ProjectsSection: React.FC<ProjectsSectionProps> = ({
   const suppressClickUntilRef = useRef(0);
   const [motionPhase, setMotionPhase] = useState<ProjectsMotionPhase>('idle');
   const [isDragging, setIsDragging] = useState(false);
+  const [isBackgroundVideoReady, setIsBackgroundVideoReady] = useState(false);
 
   useEffect(() => {
     const section = sectionRef.current;
@@ -69,7 +70,11 @@ export const ProjectsSection: React.FC<ProjectsSectionProps> = ({
     const observer = new IntersectionObserver(
       ([entry]) => {
         if (entry.isIntersecting) {
-          void video.play().catch(() => undefined);
+          if (!video.src) {
+            video.src = PROJECTS_BACKGROUND_VIDEO_URL;
+            video.load();
+          }
+          if (video.paused) void video.play().catch(() => undefined);
         } else {
           video.pause();
         }
@@ -363,13 +368,15 @@ export const ProjectsSection: React.FC<ProjectsSectionProps> = ({
         <div className="pointer-events-none absolute inset-0 z-0" aria-hidden="true">
           <video
             ref={backgroundVideoRef}
-            src={PROJECTS_BACKGROUND_VIDEO_URL}
             muted
             loop
             playsInline
-            preload="metadata"
+            preload="none"
+            onCanPlay={() => setIsBackgroundVideoReady(true)}
             tabIndex={-1}
-            className="h-full w-full object-cover"
+            className={`h-full w-full object-cover transition-opacity duration-700 ease-out motion-reduce:transition-none ${
+              isBackgroundVideoReady ? 'opacity-100' : 'opacity-0'
+            }`}
           />
         </div>
 

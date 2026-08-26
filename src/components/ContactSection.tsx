@@ -4,6 +4,7 @@ import { Copy, Check, Phone, Mail } from 'lucide-react';
 import { CONTACT_INFO } from '../data';
 
 const CONTACT_VIDEO_URL = new URL('../video/contact_video.mp4', import.meta.url).href;
+const CONTACT_POSTER_URL = new URL('../images/contact_bg.jpg', import.meta.url).href;
 
 interface ContactSectionProps {
   isOpenModal?: boolean;
@@ -14,6 +15,7 @@ export const ContactSection: React.FC<ContactSectionProps> = () => {
   const sectionRef = useRef<HTMLDivElement | null>(null);
   const videoRef = useRef<HTMLVideoElement | null>(null);
   const [hasEntered, setHasEntered] = useState(false);
+  const [isVideoReady, setIsVideoReady] = useState(false);
   const [copiedField, setCopiedField] = useState<string | null>(null);
 
   useEffect(() => {
@@ -49,7 +51,11 @@ export const ContactSection: React.FC<ContactSectionProps> = () => {
     const observer = new IntersectionObserver(
       ([entry]) => {
         if (entry.isIntersecting) {
-          void video.play().catch(() => undefined);
+          if (!video.src) {
+            video.src = CONTACT_VIDEO_URL;
+            video.load();
+          }
+          if (video.paused) void video.play().catch(() => undefined);
         } else {
           video.pause();
         }
@@ -83,14 +89,17 @@ export const ContactSection: React.FC<ContactSectionProps> = () => {
           <div className="absolute -inset-[4%]">
             <video
               ref={videoRef}
-              src={CONTACT_VIDEO_URL}
+              poster={CONTACT_POSTER_URL}
               muted
               loop
               playsInline
-              preload="metadata"
+              preload="none"
+              onCanPlay={() => setIsVideoReady(true)}
               tabIndex={-1}
               aria-hidden="true"
-              className="h-full w-full object-cover object-center"
+              className={`h-full w-full object-cover object-center transition-opacity duration-700 ease-out motion-reduce:transition-none ${
+                isVideoReady ? 'opacity-100' : 'opacity-0'
+              }`}
             />
           </div>
         </div>

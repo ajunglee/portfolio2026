@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState } from 'react';
 
 interface VideoCanvasHeroProps {
   videoUrl?: string;
@@ -6,7 +6,10 @@ interface VideoCanvasHeroProps {
 
 const HERO_VIDEO_URL = new URL('../video/hero_video.mp4', import.meta.url).href;
 
-export const VideoCanvasHero: React.FC<VideoCanvasHeroProps> = ({ videoUrl = HERO_VIDEO_URL }) => (
+export const VideoCanvasHero: React.FC<VideoCanvasHeroProps> = ({ videoUrl = HERO_VIDEO_URL }) => {
+  const [isReady, setIsReady] = useState(false);
+
+  return (
   <div className="pointer-events-none absolute inset-0 z-0 overflow-hidden bg-black">
     <video
       src={videoUrl}
@@ -14,8 +17,11 @@ export const VideoCanvasHero: React.FC<VideoCanvasHeroProps> = ({ videoUrl = HER
       loop
       muted
       playsInline
-      preload="auto"
-      className="h-full w-full object-cover opacity-90"
+      preload="metadata"
+      onCanPlay={() => setIsReady(true)}
+      className={`h-full w-full object-cover transition-opacity duration-700 ease-out motion-reduce:transition-none ${
+        isReady ? 'opacity-90' : 'opacity-0'
+      }`}
       aria-hidden="true"
     />
 
@@ -39,4 +45,5 @@ export const VideoCanvasHero: React.FC<VideoCanvasHeroProps> = ({ videoUrl = HER
       }}
     />
   </div>
-);
+  );
+};

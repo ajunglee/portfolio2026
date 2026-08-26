@@ -5,22 +5,61 @@ interface VideoCanvasDiggerProps {
 }
 
 const ABOUT_VIDEO_URL = new URL('../video/about_video.mp4', import.meta.url).href;
+const ABOUT_POSTER_URL = new URL('../images/about_top_bg.jpg', import.meta.url).href;
 
 export const VideoCanvasDigger: React.FC<VideoCanvasDiggerProps> = ({
   videoUrl = ABOUT_VIDEO_URL
 }) => {
   const canvasRef = useRef<HTMLCanvasElement | null>(null);
+  const videoRef = useRef<HTMLVideoElement | null>(null);
+  const containerRef = useRef<HTMLDivElement | null>(null);
   const [useVideo, setUseVideo] = useState(false);
 
   useEffect(() => {
-    const video = document.createElement('video');
-    video.src = videoUrl;
-    video.oncanplay = () => setUseVideo(true);
-    video.onerror = () => setUseVideo(false);
+    const container = containerRef.current;
+    const video = videoRef.current;
+    if (!container || !video) return;
+
+    const startVideo = () => {
+      if (!video.src) {
+        video.src = videoUrl;
+        video.load();
+      }
+      void video.play().catch(() => undefined);
+    };
+    const handleCanPlay = () => setUseVideo(true);
+    const handleError = () => setUseVideo(false);
+    video.addEventListener('canplay', handleCanPlay);
+    video.addEventListener('error', handleError);
+
+    if (!('IntersectionObserver' in window)) {
+      startVideo();
+    } else {
+      const observer = new IntersectionObserver(
+        ([entry]) => {
+          if (entry.isIntersecting) {
+            startVideo();
+            observer.disconnect();
+          }
+        },
+        { threshold: 0.05 },
+      );
+      observer.observe(container);
+
+      return () => {
+        observer.disconnect();
+        video.removeEventListener('canplay', handleCanPlay);
+        video.removeEventListener('error', handleError);
+        video.pause();
+        video.removeAttribute('src');
+        video.load();
+      };
+    }
 
     return () => {
-      video.oncanplay = null;
-      video.onerror = null;
+      video.removeEventListener('canplay', handleCanPlay);
+      video.removeEventListener('error', handleError);
+      video.pause();
       video.removeAttribute('src');
       video.load();
     };
@@ -128,18 +167,19 @@ export const VideoCanvasDigger: React.FC<VideoCanvasDiggerProps> = ({
   }, [useVideo]);
 
   return (
-    <div className="absolute inset-0 overflow-hidden pointer-events-none z-0">
-      {useVideo ? (
-        <video
-          src={videoUrl}
-          autoPlay
-          loop
-          muted
-          playsInline
-          className="w-full h-full object-cover opacity-80"
-          aria-hidden="true"
-        />
-      ) : (
+    <div ref={containerRef} className="absolute inset-0 overflow-hidden pointer-events-none z-0">
+      <video
+        ref={videoRef}
+        autoPlay
+        loop
+        muted
+        playsInline
+        preload="none"
+        poster={ABOUT_POSTER_URL}
+        className={`w-full h-full object-cover opacity-80 ${useVideo ? 'block' : 'hidden'}`}
+        aria-hidden="true"
+      />
+      {!useVideo && (
         <canvas ref={canvasRef} className="w-full h-full object-cover opacity-80" aria-hidden="true" />
       )}
       <div className="absolute inset-0 bg-gradient-to-t from-black via-black/40 to-black" />
