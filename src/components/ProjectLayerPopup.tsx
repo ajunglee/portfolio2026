@@ -108,7 +108,6 @@ export const ProjectLayerPopup: React.FC<ProjectLayerPopupProps> = ({
   const titleId = `project-popup-title-${project.id}`;
   const descriptionId = `project-popup-description-${project.id}`;
   const colorTitleId = `project-popup-color-title-${project.id}`;
-  const fontTitleId = `project-popup-font-title-${project.id}`;
   const mockupTitleId = `project-popup-mockup-title-${project.id}`;
   const accentColor = project.colors[0]?.hex ?? '#7B00FF';
   const mockupImage = project.mockupImage;
@@ -318,63 +317,6 @@ export const ProjectLayerPopup: React.FC<ProjectLayerPopupProps> = ({
             </div>
           </section>
 
-          <section
-            aria-labelledby={fontTitleId}
-            className="border-y border-white/10 bg-white/[0.018] px-5 py-20 sm:px-10 sm:py-28 lg:px-16 lg:py-32"
-          >
-            <div className="mb-10 sm:mb-14">
-              <p className="mb-3 text-[10px] font-semibold uppercase tracking-[0.24em] text-neutral-500">
-                02
-              </p>
-              <h3 id={fontTitleId} className="text-3xl tracking-tight text-white sm:text-5xl">
-                Font System
-              </h3>
-            </div>
-
-            <div className="divide-y divide-white/10 border-y border-white/10">
-              {project.fonts.map((font) => (
-                <article
-                  key={`${font.family}-${font.usage}`}
-                  className="grid gap-8 py-8 sm:grid-cols-[minmax(0,1.25fr)_minmax(220px,0.75fr)] sm:items-center sm:py-10"
-                >
-                  <div className="min-w-0">
-                    <p
-                      className="truncate leading-none tracking-[-0.045em] text-white"
-                      style={
-                        font.size
-                          ? {
-                              fontSize: `clamp(${Math.max(font.size * 0.6, 19)}px, ${font.size / 10}vw, ${font.size}px)`,
-                            }
-                          : { fontSize: 'clamp(2.2rem, 6vw, 5rem)' }
-                      }
-                    >
-                      {font.family}
-                    </p>
-                    <p className="mt-4 text-xs uppercase tracking-[0.16em] text-neutral-600">
-                      Typography Family
-                    </p>
-                  </div>
-                  <div className="grid grid-cols-2 gap-5 text-sm sm:grid-cols-1 sm:gap-4">
-                    <div>
-                      <p className="text-[10px] uppercase tracking-[0.18em] text-neutral-600">Weight</p>
-                      <p className="mt-1 text-neutral-300">{font.weights}</p>
-                    </div>
-                    {font.size && (
-                      <div>
-                        <p className="text-[10px] uppercase tracking-[0.18em] text-neutral-600">Size</p>
-                        <p className="mt-1 tabular-nums text-neutral-300">{font.size}px</p>
-                      </div>
-                    )}
-                    <div>
-                      <p className="text-[10px] uppercase tracking-[0.18em] text-neutral-600">Usage</p>
-                      <p className="mt-1 text-neutral-300">{font.usage}</p>
-                    </div>
-                  </div>
-                </article>
-              ))}
-            </div>
-          </section>
-
           {mockupImage && (
             <section
               aria-labelledby={mockupTitleId}
@@ -382,7 +324,7 @@ export const ProjectLayerPopup: React.FC<ProjectLayerPopupProps> = ({
             >
               <div className="mb-10 sm:mb-14">
                 <p className="mb-3 text-[10px] font-semibold uppercase tracking-[0.24em] text-neutral-500">
-                  03
+                  02
                 </p>
                 <h3 id={mockupTitleId} className="text-3xl tracking-tight text-white sm:text-5xl">
                   Full Page

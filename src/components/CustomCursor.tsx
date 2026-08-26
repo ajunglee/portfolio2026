@@ -1,6 +1,6 @@
 import React, { useEffect, useRef } from 'react';
 
-const CURSOR_IMAGE_URL = new URL('../images/cursor.png', import.meta.url).href;
+const CURSOR_IMAGE_URL = new URL('../images/cursor.webp', import.meta.url).href;
 
 export const CustomCursor: React.FC = () => {
   const cursorRef = useRef<HTMLDivElement | null>(null);

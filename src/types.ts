@@ -44,12 +44,6 @@ export interface ScatterProject {
     name: string;
     hex: string;
   }>;
-  fonts: Array<{
-    family: string;
-    weights: string;
-    usage: string;
-    size?: number;
-  }>;
 }
 
 export interface ArchiveItem {

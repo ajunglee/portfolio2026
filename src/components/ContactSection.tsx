@@ -60,7 +60,7 @@ export const ContactSection: React.FC<ContactSectionProps> = () => {
           video.pause();
         }
       },
-      { threshold: 0.05 }
+      { threshold: 0.05, rootMargin: '700px 0px' }
     );
 
     observer.observe(section);
@@ -89,12 +89,13 @@ export const ContactSection: React.FC<ContactSectionProps> = () => {
           <div className="absolute -inset-[4%]">
             <video
               ref={videoRef}
+              src={CONTACT_VIDEO_URL}
               poster={CONTACT_POSTER_URL}
               muted
               loop
               playsInline
-              preload="none"
-              onCanPlay={() => setIsVideoReady(true)}
+              preload="metadata"
+              onLoadedData={() => setIsVideoReady(true)}
               tabIndex={-1}
               aria-hidden="true"
               className={`h-full w-full object-cover object-center transition-opacity duration-700 ease-out motion-reduce:transition-none ${

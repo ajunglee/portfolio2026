@@ -28,14 +28,14 @@ const ABOUT_MEDIA = {
     new URL('../images/about_crack5.jpg', import.meta.url).href,
     new URL('../images/about_crack6.jpg', import.meta.url).href,
   ],
-  atmosphere: new URL('../images/about_dust.png', import.meta.url).href,
+  atmosphere: new URL('../images/about_dust.jpg', import.meta.url).href,
   conceptCardBack: new URL('../images/about_card_bh.png', import.meta.url).href,
   conceptCards: [
     new URL('../images/about_card1.png', import.meta.url).href,
     new URL('../images/about_card2.png', import.meta.url).href,
     new URL('../images/about_card3.png', import.meta.url).href,
     new URL('../images/about_card4.png', import.meta.url).href,
-    new URL('../images/about_card5.png', import.meta.url).href,
+    new URL('../images/about_card5.webp', import.meta.url).href,
     new URL('../images/about_card6.png', import.meta.url).href,
   ],
 } as const;

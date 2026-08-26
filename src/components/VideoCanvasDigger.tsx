@@ -21,10 +21,6 @@ export const VideoCanvasDigger: React.FC<VideoCanvasDiggerProps> = ({
     if (!container || !video) return;
 
     const startVideo = () => {
-      if (!video.src) {
-        video.src = videoUrl;
-        video.load();
-      }
       void video.play().catch(() => undefined);
     };
     const handleCanPlay = () => setUseVideo(true);
@@ -42,7 +38,7 @@ export const VideoCanvasDigger: React.FC<VideoCanvasDiggerProps> = ({
             observer.disconnect();
           }
         },
-        { threshold: 0.05 },
+        { threshold: 0.05, rootMargin: '400px 0px' },
       );
       observer.observe(container);
 
@@ -170,11 +166,12 @@ export const VideoCanvasDigger: React.FC<VideoCanvasDiggerProps> = ({
     <div ref={containerRef} className="absolute inset-0 overflow-hidden pointer-events-none z-0">
       <video
         ref={videoRef}
+        src={videoUrl}
         autoPlay
         loop
         muted
         playsInline
-        preload="none"
+        preload="metadata"
         poster={ABOUT_POSTER_URL}
         className={`w-full h-full object-cover opacity-80 ${useVideo ? 'block' : 'hidden'}`}
         aria-hidden="true"

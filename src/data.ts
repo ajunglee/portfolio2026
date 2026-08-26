@@ -1,29 +1,21 @@
 import { FeaturedProject, ScatterProject, ArchiveItem } from './types';
 
-const FEATURED_BX_PREVIEW_URL = new URL(
-  './images/Featured_img_1.png',
-  import.meta.url,
-).href;
-const FEATURED_BX_HOVER_URL = new URL(
-  './images/Featured_img_behind_1.png',
-  import.meta.url,
-).href;
 const PROJECT_PREVIEW_URLS = [
-  new URL('./images/project_img1.png', import.meta.url).href,
-  new URL('./images/project_img2.png', import.meta.url).href,
-  new URL('./images/project_img3.png', import.meta.url).href,
-  new URL('./images/project_img4.png', import.meta.url).href,
-  new URL('./images/project_img5.png', import.meta.url).href,
-  new URL('./images/project_img6.png', import.meta.url).href,
-  new URL('./images/project_img7.png', import.meta.url).href,
-  new URL('./images/project_img8.png', import.meta.url).href,
+  new URL('./images/project_img1.webp', import.meta.url).href,
+  new URL('./images/project_img2.webp', import.meta.url).href,
+  new URL('./images/project_img3.webp', import.meta.url).href,
+  new URL('./images/project_img4.webp', import.meta.url).href,
+  new URL('./images/project_img5.webp', import.meta.url).href,
+  new URL('./images/project_img6.webp', import.meta.url).href,
+  new URL('./images/project_img7.webp', import.meta.url).href,
+  new URL('./images/project_img8.webp', import.meta.url).href,
 ] as const;
 const PROJECT_JONGNO_FULLPAGE_URL = new URL(
-  './images/project_con_jongno.jpg',
+  './images/project_con_jongno.webp',
   import.meta.url,
 ).href;
 const PROJECT_JONGNO_MOBILE_URL = new URL(
-  './images/project_con_jongno_m.png',
+  './images/project_con_jongno_m.webp',
   import.meta.url,
 ).href;
 const PROJECT_GT_FULLPAGE_URL = new URL(
@@ -79,69 +71,47 @@ const PROJECT_CERTI_FULLPAGE_01_URL = new URL(
   import.meta.url,
 ).href;
 const PROJECT_CERTI_FULLPAGE_02_URL = new URL(
-  './images/project_con_certi2.png',
+  './images/project_con_certi2.jpg',
   import.meta.url,
 ).href;
 const PROJECT_SANGROK_DESKTOP_URL = new URL(
-  './images/project_con_sangrok_pc.jpg',
+  './images/project_con_sangrok_pc.webp',
   import.meta.url,
 ).href;
 const PROJECT_SANGROK_TABLET_URL = new URL(
-  './images/project_con_sangrok_tab.png',
+  './images/project_con_sangrok_tab.webp',
   import.meta.url,
 ).href;
 const PROJECT_SANGROK_MOBILE_URL = new URL(
-  './images/project_con_sangrok_m.png',
+  './images/project_con_sangrok_m.webp',
   import.meta.url,
 ).href;
 const ARCHIVE_FASHION_URLS = [
-  new URL('./images/fashion1.png', import.meta.url).href,
-  new URL('./images/fashion2.png', import.meta.url).href,
-  new URL('./images/fashion3.png', import.meta.url).href,
-  new URL('./images/fashion4.png', import.meta.url).href,
-  new URL('./images/fashion5.png', import.meta.url).href,
+  new URL('./images/fashion1.jpg', import.meta.url).href,
+  new URL('./images/fashion2.jpg', import.meta.url).href,
+  new URL('./images/fashion3.jpg', import.meta.url).href,
+  new URL('./images/fashion4.jpg', import.meta.url).href,
+  new URL('./images/fashion5.jpg', import.meta.url).href,
 ] as const;
 const ARCHIVE_BEAUTY_URLS = [
-  new URL('./images/beauty1.png', import.meta.url).href,
-  new URL('./images/beauty2.png', import.meta.url).href,
-  new URL('./images/beauty3.png', import.meta.url).href,
-  new URL('./images/beauty4.png', import.meta.url).href,
-  new URL('./images/beauty5.png', import.meta.url).href,
+  new URL('./images/beauty1.jpg', import.meta.url).href,
+  new URL('./images/beauty2.jpg', import.meta.url).href,
+  new URL('./images/beauty3.jpg', import.meta.url).href,
+  new URL('./images/beauty4.jpg', import.meta.url).href,
+  new URL('./images/beauty5.jpg', import.meta.url).href,
 ] as const;
 const ARCHIVE_PROMOTION_URLS = [
-  new URL('./images/Promotion1.png', import.meta.url).href,
-  new URL('./images/promotion2.png', import.meta.url).href,
-  new URL('./images/promotion3.png', import.meta.url).href,
-  new URL('./images/promotion4.png', import.meta.url).href,
-  new URL('./images/promotion5.png', import.meta.url).href,
+  new URL('./images/Promotion1.webp', import.meta.url).href,
+  new URL('./images/promotion2.webp', import.meta.url).href,
+  new URL('./images/promotion3.webp', import.meta.url).href,
+  new URL('./images/promotion4.webp', import.meta.url).href,
+  new URL('./images/promotion5.webp', import.meta.url).href,
 ] as const;
-const PRETENDARD_FONT_SYSTEM: ScatterProject['fonts'] = [
-  {
-    family: 'Pretendard',
-    weights: 'Bold',
-    usage: 'Heading 1',
-    size: 60,
-  },
-  {
-    family: 'Pretendard',
-    weights: 'Bold',
-    usage: 'Heading 2',
-    size: 40,
-  },
-  {
-    family: 'Pretendard',
-    weights: 'Bold',
-    usage: 'Heading 3',
-    size: 32,
-  },
-];
-
 export const HERO_CATEGORIES = [
   { id: 'web-ui', label: 'Web UI/UX', targetId: 'featured' },
   { id: 'visual', label: 'Visual Design', targetId: 'projects' },
   { id: 'motion', label: 'Motion', targetId: 'archive' },
 ];
-
 export const FEATURED_PROJECTS: FeaturedProject[] = [
   {
     id: 'bx',
@@ -157,8 +127,6 @@ export const FEATURED_PROJECTS: FeaturedProject[] = [
     client: 'Apex Creative Studio',
     role: 'Lead Brand Experience Designer',
     previewBg: 'bg-gradient-to-br from-neutral-800 via-neutral-900 to-black',
-    previewImage: FEATURED_BX_PREVIEW_URL,
-    hoverImage: FEATURED_BX_HOVER_URL,
     accentColor: '#a855f7',
     images: [
       'https://images.unsplash.com/photo-1618005182384-a83a8bd57fbe?q=80&w=1200&auto=format&fit=crop',
@@ -207,7 +175,7 @@ export const FEATURED_PROJECTS: FeaturedProject[] = [
   }
 ];
 
-// 상세 설명·발주사·팔레트·폰트는 팝업 레이아웃용 초안입니다.
+// 상세 설명·발주사·팔레트는 팝업 레이아웃용 초안입니다.
 // 공개 전 실제 프로젝트 명세로 교체하고, 기여도는 확정 수치를 입력합니다.
 // 별도 전체 페이지 이미지가 준비되면 각 항목의 mockupImage에 연결합니다.
 export const SCATTER_PROJECTS: ScatterProject[] = [
@@ -228,7 +196,6 @@ export const SCATTER_PROJECTS: ScatterProject[] = [
       { name: 'Sub 01', hex: '#249984' },
       { name: 'Sub 02', hex: '#9400D3' },
     ],
-    fonts: PRETENDARD_FONT_SYSTEM,
   },
   {
     id: 'proj-2',
@@ -250,7 +217,6 @@ export const SCATTER_PROJECTS: ScatterProject[] = [
       { name: 'Sub 01', hex: '#00CFFF' },
       { name: 'Sub 02', hex: '#FF5B00' },
     ],
-    fonts: PRETENDARD_FONT_SYSTEM,
   },
   {
     id: 'proj-3',
@@ -271,7 +237,6 @@ export const SCATTER_PROJECTS: ScatterProject[] = [
       { name: 'Sub · Alizarin', hex: '#D32730' },
       { name: 'Sub · Golden Yellow', hex: '#FFDF00' },
     ],
-    fonts: PRETENDARD_FONT_SYSTEM,
   },
   {
     id: 'proj-4',
@@ -293,7 +258,6 @@ export const SCATTER_PROJECTS: ScatterProject[] = [
       { name: 'Sub 01', hex: '#5D57EB' },
       { name: 'Sub 02', hex: '#219F73' },
     ],
-    fonts: PRETENDARD_FONT_SYSTEM,
   },
   {
     id: 'proj-5',
@@ -315,7 +279,6 @@ export const SCATTER_PROJECTS: ScatterProject[] = [
       { name: 'Sub 01', hex: '#008AFF' },
       { name: 'Sub 02', hex: '#F36F21' },
     ],
-    fonts: PRETENDARD_FONT_SYSTEM,
   },
   {
     id: 'proj-6',
@@ -337,7 +300,6 @@ export const SCATTER_PROJECTS: ScatterProject[] = [
       { name: 'Sub 01', hex: '#FFAA35' },
       { name: 'Sub 02', hex: '#5B3913' },
     ],
-    fonts: PRETENDARD_FONT_SYSTEM,
   },
   {
     id: 'proj-7',
@@ -358,7 +320,6 @@ export const SCATTER_PROJECTS: ScatterProject[] = [
       { name: 'Sub 01', hex: '#2F6BFF' },
       { name: 'Sub 02', hex: '#21376B' },
     ],
-    fonts: PRETENDARD_FONT_SYSTEM,
   },
   {
     id: 'proj-8',
@@ -379,7 +340,6 @@ export const SCATTER_PROJECTS: ScatterProject[] = [
       { name: 'Main', hex: '#E63927' },
       { name: 'Sub', hex: '#1E2124' },
     ],
-    fonts: PRETENDARD_FONT_SYSTEM,
   }
 ].sort((projectA, projectB) => Number(projectB.year) - Number(projectA.year));
 
