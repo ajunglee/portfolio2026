@@ -9,6 +9,9 @@ interface ArchiveLayerPopupProps {
   onClose: () => void;
 }
 
+const isVideoAsset = (url?: string) =>
+  typeof url === 'string' && /\.(mp4|webm|ogg|mov)(\?.*)?$/i.test(url);
+
 const ArchiveLayerPopup: React.FC<ArchiveLayerPopupProps> = ({ item, onClose }) => {
   const dialogRef = useRef<HTMLDivElement>(null);
   const closeButtonRef = useRef<HTMLButtonElement>(null);
@@ -80,13 +83,25 @@ const ArchiveLayerPopup: React.FC<ArchiveLayerPopupProps> = ({ item, onClose }) 
 
         <div className="relative aspect-square w-full overflow-hidden bg-black">
           {item.image ? (
-            <img
-              src={item.image}
-              alt={`${item.category} — ${item.keywords.join(', ')}`}
-              className="h-full w-full object-cover"
-              decoding="async"
-              draggable={false}
-            />
+            isVideoAsset(item.image) ? (
+              <video
+                src={item.image}
+                autoPlay
+                muted
+                loop
+                playsInline
+                className="h-full w-full object-cover"
+                preload="metadata"
+              />
+            ) : (
+              <img
+                src={item.image}
+                alt={`${item.category} — ${item.keywords.join(', ')}`}
+                className="h-full w-full object-cover"
+                decoding="async"
+                draggable={false}
+              />
+            )
           ) : (
             <div className="flex h-full items-center justify-center px-8 text-center">
               <span className="text-sm uppercase tracking-[0.24em] text-white/35">

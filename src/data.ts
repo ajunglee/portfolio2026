@@ -10,6 +10,10 @@ const PROJECT_PREVIEW_URLS = [
   new URL('./images/project_img7.webp', import.meta.url).href,
   new URL('./images/project_img8.webp', import.meta.url).href,
 ] as const;
+const PROJECT_BTOB_FULLPAGE_URL = new URL(
+  './images/project_con_btob.jpg',
+  import.meta.url,
+).href;
 const PROJECT_JONGNO_FULLPAGE_URL = new URL(
   './images/project_con_jongno.webp',
   import.meta.url,
@@ -107,6 +111,13 @@ const ARCHIVE_PROMOTION_URLS = [
   new URL('./images/promotion4.webp', import.meta.url).href,
   new URL('./images/promotion5.webp', import.meta.url).href,
 ] as const;
+const ARCHIVE_MOTION_URLS = [
+  new URL('./video/Motion1.mp4', import.meta.url).href,
+  new URL('./video/Motion2.mp4', import.meta.url).href,
+  new URL('./video/Motion3.mp4', import.meta.url).href,
+  new URL('./video/Motion4.mp4', import.meta.url).href,
+  new URL('./video/Motion5.mp4', import.meta.url).href,
+] as const;
 export const HERO_CATEGORIES = [
   { id: 'web-ui', label: 'Web UI/UX', targetId: 'featured' },
   { id: 'visual', label: 'Visual Design', targetId: 'projects' },
@@ -182,6 +193,7 @@ export const SCATTER_PROJECTS: ScatterProject[] = [
   {
     id: 'proj-1',
     previewImage: PROJECT_PREVIEW_URLS[0],
+    mockupImage: PROJECT_BTOB_FULLPAGE_URL,
     title: 'BtoB플랫폼',
     subtitle: '스마트 산업 지원 통합 플랫폼',
     tags: ['Web', 'UI/UX', 'Responsive'],
@@ -190,7 +202,7 @@ export const SCATTER_PROJECTS: ScatterProject[] = [
     client: '한국정보기술연구원(KITRI)',
     year: '2025',
     schedule: '2025년',
-    contribution: { planning: null, design: null },
+    contribution: { planning: 100, design: 100 },
     colors: [
       { name: 'Main', hex: '#0435B2' },
       { name: 'Sub 01', hex: '#249984' },
@@ -211,7 +223,7 @@ export const SCATTER_PROJECTS: ScatterProject[] = [
     client: '한국산업기술진흥원',
     year: '2025',
     schedule: '2025년 6월 ~ 2025년 12월',
-    contribution: { planning: null, design: null },
+    contribution: { planning: 50, design: 100 },
     colors: [
       { name: 'Main', hex: '#5000B7' },
       { name: 'Sub 01', hex: '#00CFFF' },
@@ -231,7 +243,7 @@ export const SCATTER_PROJECTS: ScatterProject[] = [
     client: '서울특별시 종로구',
     year: '2025',
     schedule: '2025년',
-    contribution: { planning: null, design: null },
+    contribution: { planning: 100, design: 100 },
     colors: [
       { name: 'Main · Christalle', hex: '#33036B' },
       { name: 'Sub · Alizarin', hex: '#D32730' },
@@ -252,7 +264,7 @@ export const SCATTER_PROJECTS: ScatterProject[] = [
     client: '경남교육청',
     year: '2026',
     schedule: '2026년',
-    contribution: { planning: null, design: null },
+    contribution: { planning: 80, design: 100 },
     colors: [
       { name: 'Main', hex: '#0068FF' },
       { name: 'Sub 01', hex: '#5D57EB' },
@@ -273,7 +285,7 @@ export const SCATTER_PROJECTS: ScatterProject[] = [
     client: '인공지능산업융합사업단(AICA)',
     year: '2025',
     schedule: '2025년',
-    contribution: { planning: null, design: null },
+    contribution: { planning: 100, design: 100 },
     colors: [
       { name: 'Main', hex: '#275CAB' },
       { name: 'Sub 01', hex: '#008AFF' },
@@ -294,7 +306,7 @@ export const SCATTER_PROJECTS: ScatterProject[] = [
     client: '모두가도시농부, 브랜드쿡',
     year: '2023',
     schedule: '2023년',
-    contribution: { planning: null, design: null },
+    contribution: { planning: 100, design: 100 },
     colors: [
       { name: 'Main', hex: '#FE5722' },
       { name: 'Sub 01', hex: '#FFAA35' },
@@ -314,7 +326,7 @@ export const SCATTER_PROJECTS: ScatterProject[] = [
     client: '한국생산성본부인증원',
     year: '2026',
     schedule: '2026년 8월',
-    contribution: { planning: null, design: null },
+    contribution: { planning: 100, design: 100 },
     colors: [
       { name: 'Main', hex: '#EE3048' },
       { name: 'Sub 01', hex: '#2F6BFF' },
@@ -335,7 +347,7 @@ export const SCATTER_PROJECTS: ScatterProject[] = [
     client: '공무원연금공단',
     year: '2025',
     schedule: '2025년 8월',
-    contribution: { planning: null, design: null },
+    contribution: { planning: 80, design: 100 },
     colors: [
       { name: 'Main', hex: '#E63927' },
       { name: 'Sub', hex: '#1E2124' },
@@ -461,22 +473,39 @@ export const ARCHIVE_COLUMNS: ArchiveItem[][] = [
   // Column 4
   [
     {
-      id: 'arch-10',
-      category: 'CONCEPT',
-      keywords: ['Chrome', 'Metallic'],
-      description: '크롬 소재의 반사와 금속 질감을 실험한 콘셉트 비주얼입니다.',
+      id: 'arch-motion-1',
+      category: 'MOTION',
+      keywords: ['Loop', 'Brand'],
+      description: '브랜드 아이덴티티를 강조하는 무한 루프 모션 비주얼입니다.',
+      image: ARCHIVE_MOTION_URLS[0],
     },
     {
-      id: 'arch-11',
-      category: 'PORTRAIT',
-      keywords: ['Greyscale', 'Specular'],
-      description: '빛과 명암만으로 표면의 질감을 강조한 모노크롬 포트레이트입니다.',
+      id: 'arch-motion-2',
+      category: 'MOTION',
+      keywords: ['Pulse', 'Kinetic'],
+      description: '리듬감 있는 텍스트와 형태가 움직이며 에너지감을 전달하는 모션입니다.',
+      image: ARCHIVE_MOTION_URLS[1],
     },
     {
-      id: 'arch-12',
-      category: 'LIGHTING',
-      keywords: ['Laser', 'Cyan'],
-      description: '레이저와 시안 컬러로 빛의 흐름을 표현한 라이팅 스터디입니다.',
+      id: 'arch-motion-3',
+      category: 'MOTION',
+      keywords: ['Rhythm', 'Visual'],
+      description: '형태와 컬러가 자연스럽게 변환되는 시퀀스 기반의 모션 스터디입니다.',
+      image: ARCHIVE_MOTION_URLS[2],
+    },
+    {
+      id: 'arch-motion-4',
+      category: 'MOTION',
+      keywords: ['Depth', 'Transition'],
+      description: '깊이감 있는 전환 효과로 공간감을 더한 브랜드 모션입니다.',
+      image: ARCHIVE_MOTION_URLS[3],
+    },
+    {
+      id: 'arch-motion-5',
+      category: 'MOTION',
+      keywords: ['Energy', 'Campaign'],
+      description: '캠페인 콘셉트에 맞춰 속도감과 연속성을 살린 모션 비주얼입니다.',
+      image: ARCHIVE_MOTION_URLS[4],
     }
   ]
 ];

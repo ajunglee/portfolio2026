@@ -5,6 +5,9 @@ import { ArchiveItem } from '../types';
 import ArchiveLayerPopup from './ArchiveLayerPopup';
 import ViewportReveal from './ViewportReveal';
 
+const isVideoAsset = (url?: string) =>
+  typeof url === 'string' && /\.(mp4|webm|ogg|mov)(\?.*)?$/i.test(url);
+
 export const ArchiveSection: React.FC = () => {
   const [hoveredCardId, setHoveredCardId] = useState<string | null>(null);
   const [tiltMap, setTiltMap] = useState<{ [key: string]: { rotateX: number; rotateY: number } }>({});
@@ -108,8 +111,21 @@ export const ArchiveSection: React.FC = () => {
                           transformStyle: 'preserve-3d'
                         }}
                       >
-                        {/* Archive image */}
-                        {item.image && (
+                        {/* Archive image / motion */}
+                        {item.image && isVideoAsset(item.image) ? (
+                          <video
+                            src={item.image}
+                            autoPlay
+                            muted
+                            loop
+                            playsInline
+                            className={`absolute inset-0 h-full w-full object-cover transition-transform duration-700 ease-out ${
+                              !isTouchDevice && isHovered ? 'scale-[1.12]' : 'scale-100'
+                            }`}
+                            preload="metadata"
+                            aria-hidden="true"
+                          />
+                        ) : item.image ? (
                           <img
                             src={item.image}
                             alt=""
@@ -121,7 +137,7 @@ export const ArchiveSection: React.FC = () => {
                             draggable={false}
                             aria-hidden="true"
                           />
-                        )}
+                        ) : null}
 
                         <div className="pointer-events-none absolute inset-0 bg-gradient-to-t from-black/90 via-black/30 to-transparent" />
 
