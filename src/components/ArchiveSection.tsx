@@ -9,7 +9,6 @@ const isVideoAsset = (url?: string) =>
   typeof url === 'string' && /\.(mp4|webm|ogg|mov)(\?.*)?$/i.test(url);
 
 export const ArchiveSection: React.FC = () => {
-  const [hoveredCardId, setHoveredCardId] = useState<string | null>(null);
   const [tiltMap, setTiltMap] = useState<{ [key: string]: { rotateX: number; rotateY: number } }>({});
   const [isTouchDevice, setIsTouchDevice] = useState(false);
   const [selectedItem, setSelectedItem] = useState<ArchiveItem | null>(null);
@@ -37,7 +36,6 @@ export const ArchiveSection: React.FC = () => {
   };
 
   const handleMouseLeave = (id: string) => {
-    setHoveredCardId(null);
     setTiltMap((prev) => ({ ...prev, [id]: { rotateX: 0, rotateY: 0 } }));
   };
 
@@ -83,22 +81,22 @@ export const ArchiveSection: React.FC = () => {
                     animationDuration: `${columnItems.length * 10 + colIdx * 3}s`,
                     animationTimingFunction: 'linear',
                     animationIterationCount: 'infinite',
-                    animationPlayState: hoveredCardId || selectedItem ? 'paused' : 'running',
+                    animationPlayState: 'running',
                   }}
                 >
                   {duplicatedItems.map((item, itemIdx) => {
                     const uniqueKey = `${item.id}-${colIdx}-${itemIdx}`;
                     const tilt = tiltMap[uniqueKey] || { rotateX: 0, rotateY: 0 };
-                    const isHovered = hoveredCardId === uniqueKey;
+                    const isHovered = Boolean(
+                      tiltMap[uniqueKey] && (tiltMap[uniqueKey].rotateX !== 0 || tiltMap[uniqueKey].rotateY !== 0),
+                    );
 
                     return (
                       <button
                         type="button"
                         key={uniqueKey}
-                        onMouseEnter={() => setHoveredCardId(uniqueKey)}
                         onMouseMove={(e) => handleMouseMove(e, uniqueKey)}
                         onMouseLeave={() => handleMouseLeave(uniqueKey)}
-                        onFocus={() => setHoveredCardId(uniqueKey)}
                         onBlur={() => handleMouseLeave(uniqueKey)}
                         onClick={() => setSelectedItem(item)}
                         aria-label={`Open ${item.category} archive detail: ${item.keywords.join(', ')}`}

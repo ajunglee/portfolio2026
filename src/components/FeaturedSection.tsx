@@ -12,24 +12,19 @@ export const FeaturedSection: React.FC<FeaturedSectionProps> = ({ onSelectProjec
   // Active index (0: BX, 1: Motion, 2: Promotion)
   const [activeIndex, setActiveIndex] = useState(1);
   const [hasEntered, setHasEntered] = useState(false);
-  const [isCarouselHovered, setIsCarouselHovered] = useState(false);
   const sectionRef = useRef<HTMLElement | null>(null);
 
   const total = FEATURED_PROJECTS.length;
 
   useEffect(() => {
-    if (
-      !hasEntered ||
-      isCarouselHovered ||
-      window.matchMedia('(prefers-reduced-motion: reduce)').matches
-    ) return;
+    if (!hasEntered || window.matchMedia('(prefers-reduced-motion: reduce)').matches) return;
 
     const autoplayId = window.setInterval(() => {
       setActiveIndex((currentIndex) => (currentIndex + 1) % total);
     }, 4000);
 
     return () => window.clearInterval(autoplayId);
-  }, [hasEntered, isCarouselHovered, total]);
+  }, [hasEntered, total]);
 
   useEffect(() => {
     if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) {
@@ -91,15 +86,7 @@ export const FeaturedSection: React.FC<FeaturedSectionProps> = ({ onSelectProjec
         >
         
         {/* Sliding Cards Track */}
-        <div
-          className="relative w-full max-w-[1050px] h-[440px] sm:h-[520px] md:h-[600px] flex items-center justify-center"
-          onPointerEnter={(event) => {
-            if (event.pointerType === 'mouse') setIsCarouselHovered(true);
-          }}
-          onPointerLeave={(event) => {
-            if (event.pointerType === 'mouse') setIsCarouselHovered(false);
-          }}
-        >
+        <div className="relative w-full max-w-[1050px] h-[440px] sm:h-[520px] md:h-[600px] flex items-center justify-center">
           {FEATURED_PROJECTS.map((project, index) => {
             const offset = getOffset(index);
             const isCenter = offset === 0;

@@ -360,16 +360,6 @@
     pointer-events: auto;
     transition: opacity 240ms ease-out;
   }
-
-  .projects-marquee-viewport:focus-within .projects-showcase-track {
-    animation-play-state: paused;
-  }
-}
-
-@media (min-width: 80rem) and (prefers-reduced-motion: no-preference) and (hover: hover) and (pointer: fine) {
-  .projects-marquee-viewport:hover .projects-showcase-track {
-    animation-play-state: paused;
-  }
 }
 
 @media (min-width: 80rem) and (max-height: 51.25rem) and (prefers-reduced-motion: no-preference) {

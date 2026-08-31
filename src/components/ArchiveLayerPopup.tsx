@@ -92,6 +92,7 @@ const ArchiveLayerPopup: React.FC<ArchiveLayerPopupProps> = ({ item, onClose }) 
                 playsInline
                 className="h-full w-full object-cover"
                 preload="metadata"
+                aria-label={`${item.category} — ${item.keywords.join(', ')}`}
               />
             ) : (
               <img

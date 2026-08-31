@@ -14,6 +14,7 @@ import { LayerPopup } from './components/LayerPopup';
 import { ProjectGalleryPopup } from './components/ProjectGalleryPopup';
 import { ProjectLayerPopup } from './components/ProjectLayerPopup';
 import { CustomCursor } from './components/CustomCursor';
+import { DiggingIntro } from './components/DiggingIntro';
 
 type ProjectsOverlay =
   | { kind: 'closed' }
@@ -127,6 +128,7 @@ export default function App() {
 
   return (
     <div className="relative min-h-screen bg-black text-[#f0f0f0] font-sans selection:bg-[#7B00FF]/60 selection:text-white overflow-x-clip">
+      <DiggingIntro />
       <CustomCursor />
 
       <button
