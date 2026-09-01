@@ -491,7 +491,7 @@ const AboutLayerPopup: React.FC<AboutLayerPopupProps> = ({ isOpen, onClose }) =>
           </button>
         </header>
 
-        <main className="overflow-hidden bg-black">
+        <main className="overflow-x-hidden bg-black">
           <section
             className="relative isolate min-h-[445px] overflow-hidden sm:min-h-[720px] lg:min-h-[780px]"
             aria-labelledby="about-popup-title"
@@ -596,10 +596,10 @@ const AboutLayerPopup: React.FC<AboutLayerPopupProps> = ({ isOpen, onClose }) =>
                 {WHY_DIGGING.map(({ number, text }) => (
                   <li
                     key={number}
-                    className="flex items-start gap-3 rounded-[3rem] border border-white/15 bg-[linear-gradient(120deg,rgba(255,255,255,0.11),rgba(255,255,255,0.035))] px-6 py-5 text-[11px] leading-[1.55] text-neutral-200 shadow-[inset_0_1px_0_rgba(255,255,255,0.14),0_14px_35px_rgba(0,0,0,0.32)] backdrop-blur-xl sm:items-center sm:gap-5 sm:px-8 sm:py-6 sm:text-sm xl:gap-6 xl:px-10 xl:py-7 xl:text-[24px]"
+                    className="flex items-start gap-3 rounded-[3rem] border border-white/15 bg-[linear-gradient(120deg,rgba(255,255,255,0.11),rgba(255,255,255,0.035))] px-6 py-5 text-[13px] leading-[1.55] text-neutral-200 shadow-[inset_0_1px_0_rgba(255,255,255,0.14),0_14px_35px_rgba(0,0,0,0.32)] backdrop-blur-xl sm:items-center sm:gap-5 sm:px-8 sm:py-6 sm:text-[16px] md:text-[18px] xl:gap-6 xl:px-10 xl:py-7 xl:text-[24px]"
                     data-about-reveal="why-item"
                   >
-                    <span className="shrink-0 whitespace-nowrap bg-gradient-to-r from-[#7B00FF] via-[#C840FF] to-[#FFB14A] bg-clip-text text-[10px] font-semibold tracking-[0.08em] text-transparent sm:text-xs xl:text-[24px]">
+                    <span className="shrink-0 whitespace-nowrap bg-gradient-to-r from-[#7B00FF] via-[#C840FF] to-[#FFB14A] bg-clip-text text-[12px] font-semibold tracking-[0.08em] text-transparent sm:text-[14px] md:text-[16px] xl:text-[24px]">
                       {number}
                     </span>
                     <span>{text}</span>
@@ -640,10 +640,10 @@ const AboutLayerPopup: React.FC<AboutLayerPopupProps> = ({ isOpen, onClose }) =>
                     aria-hidden="true"
                   />
                   <blockquote className="absolute inset-0 flex flex-col items-center justify-center px-2 text-center sm:px-5">
-                    <p className="text-[7px] leading-[1.55] text-neutral-200 min-[420px]:text-[8px] sm:text-[11px] sm:leading-5 xl:text-[18px] xl:leading-[1.45]">
+                    <p className="text-[10px] leading-[1.55] text-neutral-200 min-[420px]:text-[11px] sm:text-[14px] sm:leading-5 md:text-[15px] xl:text-[18px] xl:leading-[1.45]">
                       {quote}
                     </p>
-                    <cite className="mt-1 text-[6px] not-italic text-neutral-500 min-[420px]:text-[7px] sm:mt-2 sm:text-[9px] xl:text-[16px]">
+                    <cite className="mt-1 text-[8px] not-italic text-neutral-500 min-[420px]:text-[9px] sm:mt-2 sm:text-[11px] md:text-[12px] xl:text-[16px]">
                       — {author}
                     </cite>
                   </blockquote>

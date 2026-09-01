@@ -56,6 +56,7 @@ export const ProjectsSection: React.FC<ProjectsSectionProps> = ({
   const [motionPhase, setMotionPhase] = useState<ProjectsMotionPhase>('idle');
   const [isDragging, setIsDragging] = useState(false);
   const [isBackgroundVideoReady, setIsBackgroundVideoReady] = useState(false);
+  const [isScrollHold, setIsScrollHold] = useState(false);
 
   useEffect(() => {
     const section = sectionRef.current;
@@ -87,6 +88,43 @@ export const ProjectsSection: React.FC<ProjectsSectionProps> = ({
     return () => {
       observer.disconnect();
       video.pause();
+    };
+  }, []);
+
+  useEffect(() => {
+    let lastScrollY = window.scrollY;
+    let holdTimeout: number | undefined;
+
+    const handleScroll = () => {
+      const currentY = window.scrollY;
+      const section = sectionRef.current;
+      const isScrollingDown = currentY > lastScrollY;
+
+      if (!section) {
+        lastScrollY = currentY;
+        return;
+      }
+
+      const rect = section.getBoundingClientRect();
+      const isInView = rect.top <= window.innerHeight * 0.8 && rect.bottom >= 0;
+
+      if (isScrollingDown && isInView) {
+        setIsScrollHold(true);
+        if (holdTimeout) window.clearTimeout(holdTimeout);
+        holdTimeout = window.setTimeout(() => setIsScrollHold(false), 500);
+      } else {
+        setIsScrollHold(false);
+      }
+
+      lastScrollY = currentY;
+    };
+
+    window.addEventListener('scroll', handleScroll, { passive: true });
+    handleScroll();
+
+    return () => {
+      window.removeEventListener('scroll', handleScroll);
+      if (holdTimeout) window.clearTimeout(holdTimeout);
     };
   }, []);
 
@@ -361,10 +399,17 @@ export const ProjectsSection: React.FC<ProjectsSectionProps> = ({
   return (
     <section
       id="projects"
-      ref={sectionRef}
-      className="relative min-h-[100svh] w-full overflow-x-clip bg-black xl:h-[160svh] xl:min-h-0 motion-reduce:xl:h-auto motion-reduce:xl:min-h-[100svh]"
+      className="relative min-h-[100svh] w-full bg-black motion-reduce:xl:min-h-[100svh]"
     >
-      <div className="relative min-h-[100svh] overflow-hidden py-48 md:py-72 xl:sticky xl:top-0 xl:h-[100svh] xl:min-h-0 xl:py-0 motion-reduce:xl:static motion-reduce:xl:h-auto motion-reduce:xl:min-h-[100svh] motion-reduce:xl:py-96">
+      <div
+        ref={sectionRef}
+        className="relative min-h-[100svh] overflow-hidden py-48 md:py-72 xl:h-[100svh] xl:min-h-0 xl:py-0 motion-reduce:xl:h-auto motion-reduce:xl:min-h-[100svh] motion-reduce:xl:py-96"
+        style={
+          isScrollHold
+            ? { position: 'sticky', top: 0, zIndex: 1, transform: 'translateZ(0)', boxShadow: '0 0 0 1px rgba(255,255,255,0.04)' }
+            : undefined
+        }
+      >
         <div className="pointer-events-none absolute inset-0 z-0" aria-hidden="true">
           <video
             ref={backgroundVideoRef}

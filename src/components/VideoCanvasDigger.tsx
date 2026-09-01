@@ -19,54 +19,53 @@ export const VideoCanvasDigger: React.FC<VideoCanvasDiggerProps> = ({
     if (!container || !video) return;
 
     const startVideo = () => {
+      if (video.dataset.playing === 'true') return;
+      video.dataset.playing = 'true';
       void video.play().catch(() => undefined);
     };
     const handleCanPlay = () => {
       setUseVideo(true);
-      void video.play().catch(() => undefined);
+      startVideo();
     };
-    const handleLoadedData = () => setUseVideo(true);
+    const handleLoadedData = () => {
+      setUseVideo(true);
+      startVideo();
+    };
     const handleError = () => setUseVideo(false);
+
     video.addEventListener('canplay', handleCanPlay);
     video.addEventListener('loadeddata', handleLoadedData);
     video.addEventListener('error', handleError);
 
     if (video.readyState >= HTMLMediaElement.HAVE_CURRENT_DATA) {
       setUseVideo(true);
+      startVideo();
     }
+
+    let observer: IntersectionObserver | null = null;
 
     if (!('IntersectionObserver' in window)) {
       startVideo();
     } else {
-      const observer = new IntersectionObserver(
+      observer = new IntersectionObserver(
         ([entry]) => {
           if (entry.isIntersecting) {
             startVideo();
-            observer.disconnect();
+            observer?.disconnect();
           }
         },
         { threshold: 0.05, rootMargin: '400px 0px' },
       );
       observer.observe(container);
-
-      return () => {
-        observer.disconnect();
-        video.removeEventListener('canplay', handleCanPlay);
-        video.removeEventListener('loadeddata', handleLoadedData);
-        video.removeEventListener('error', handleError);
-        video.pause();
-        video.removeAttribute('src');
-        video.load();
-      };
     }
 
     return () => {
+      observer?.disconnect();
       video.removeEventListener('canplay', handleCanPlay);
       video.removeEventListener('loadeddata', handleLoadedData);
       video.removeEventListener('error', handleError);
       video.pause();
-      video.removeAttribute('src');
-      video.load();
+      delete video.dataset.playing;
     };
   }, [videoUrl]);
 

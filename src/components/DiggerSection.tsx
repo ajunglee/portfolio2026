@@ -20,6 +20,9 @@ export const DiggerSection: React.FC = () => {
   const [showCursor, setShowCursor] = useState(false);
   const [showCta, setShowCta] = useState(false);
   const [showBackground, setShowBackground] = useState(false);
+  const [isScrollHold, setIsScrollHold] = useState(false);
+  const [ctaPointer, setCtaPointer] = useState({ x: 0, y: 0 });
+  const ctaRef = useRef<HTMLButtonElement | null>(null);
 
   // Mouse Parallax state
   const [mousePos, setMousePos] = useState({ x: 0, y: 0 });
@@ -34,6 +37,35 @@ export const DiggerSection: React.FC = () => {
       setIsTouchDevice(true);
     }
 
+    const handlePointerMove = (event: MouseEvent) => {
+      const button = ctaRef.current;
+      if (!button) return;
+
+      const rect = button.getBoundingClientRect();
+      const centerX = rect.left + rect.width / 2;
+      const centerY = rect.top + rect.height / 2;
+      const dx = event.clientX - centerX;
+      const dy = event.clientY - centerY;
+      const distance = Math.hypot(dx, dy);
+      const safeDistance = Math.max(rect.width, rect.height) * 1.3;
+
+      if (distance < safeDistance) {
+        const strength = 1 - distance / safeDistance;
+        setCtaPointer({
+          x: dx * (0.12 + strength * 0.26),
+          y: dy * (0.12 + strength * 0.26),
+        });
+      } else if (distance < safeDistance * 1.8) {
+        const strength = 1 - (distance - safeDistance) / (safeDistance * 0.8);
+        setCtaPointer({
+          x: dx * (0.05 + strength * 0.08),
+          y: dy * (0.05 + strength * 0.08),
+        });
+      } else {
+        setCtaPointer({ x: 0, y: 0 });
+      }
+    };
+
     const mobileQuery = window.matchMedia('(max-width: 767px)');
     const reducedMotionQuery = window.matchMedia('(prefers-reduced-motion: reduce)');
 
@@ -45,10 +77,49 @@ export const DiggerSection: React.FC = () => {
     syncPreferences();
     mobileQuery.addEventListener('change', syncPreferences);
     reducedMotionQuery.addEventListener('change', syncPreferences);
+    window.addEventListener('mousemove', handlePointerMove, { passive: true });
 
     return () => {
       mobileQuery.removeEventListener('change', syncPreferences);
       reducedMotionQuery.removeEventListener('change', syncPreferences);
+      window.removeEventListener('mousemove', handlePointerMove);
+    };
+  }, []);
+
+  useEffect(() => {
+    let lastScrollY = window.scrollY;
+    let holdTimeout: number | undefined;
+
+    const handleScroll = () => {
+      const currentY = window.scrollY;
+      const section = sectionRef.current;
+      const isScrollingDown = currentY > lastScrollY;
+
+      if (!section) {
+        lastScrollY = currentY;
+        return;
+      }
+
+      const rect = section.getBoundingClientRect();
+      const isInView = rect.top <= window.innerHeight * 0.8 && rect.bottom >= 0;
+
+      if (isScrollingDown && isInView) {
+        setIsScrollHold(true);
+        if (holdTimeout) window.clearTimeout(holdTimeout);
+        holdTimeout = window.setTimeout(() => setIsScrollHold(false), 420);
+      } else {
+        setIsScrollHold(false);
+      }
+
+      lastScrollY = currentY;
+    };
+
+    window.addEventListener('scroll', handleScroll, { passive: true });
+    handleScroll();
+
+    return () => {
+      window.removeEventListener('scroll', handleScroll);
+      if (holdTimeout) window.clearTimeout(holdTimeout);
     };
   }, []);
 
@@ -148,9 +219,17 @@ export const DiggerSection: React.FC = () => {
     <>
       <section
         id="digger"
-        className="relative mt-24 w-full overflow-x-clip bg-black md:mt-36 lg:mt-48 lg:h-[220svh] xl:mt-56 motion-reduce:lg:h-auto"
+        className="relative mt-24 w-full bg-black md:mt-36 lg:mt-48 xl:mt-56"
       >
-        <div className="relative flex min-h-[100svh] w-full flex-col items-center justify-center overflow-hidden bg-black py-48 md:min-h-[120svh] md:py-72 lg:sticky lg:top-0 lg:h-[100svh] lg:min-h-0 lg:py-0 motion-reduce:lg:static motion-reduce:lg:h-auto motion-reduce:lg:min-h-[120svh] motion-reduce:lg:py-96">
+        <div
+          ref={sectionRef}
+          className="relative flex min-h-[100svh] w-full flex-col items-center justify-center overflow-hidden bg-black py-48 md:min-h-[120svh] md:py-72 lg:h-[100svh] lg:min-h-0 lg:py-0 transition-[position] duration-200 motion-reduce:lg:h-auto motion-reduce:lg:min-h-[120svh] motion-reduce:lg:py-96"
+          style={
+            isScrollHold
+              ? { position: 'sticky', top: 0, zIndex: 1, transform: 'translateZ(0)', boxShadow: '0 0 0 1px rgba(255,255,255,0.04)' }
+              : { position: 'relative' }
+          }
+        >
         {/* Background Person Video / Canvas with Parallax */}
         <div
           className={`absolute inset-0 transition-[opacity,filter] duration-[1800ms] ease-out motion-reduce:transition-none ${
@@ -173,16 +252,16 @@ export const DiggerSection: React.FC = () => {
             viewportOffset={['start 100%', 'start 42%']}
           >
             <div
-              ref={sectionRef}
-              className="relative w-full text-center flex flex-col items-center px-4"
+              className="relative flex w-full flex-col items-center gap-4 px-4 text-center sm:gap-5 md:gap-6"
               style={{
                 transform: `translate3d(${mouseX * 2}px, ${mouseY}px, 0)`,
                 willChange: prefersReducedMotion ? 'auto' : 'transform'
               }}
             >
+              <div className="pointer-events-none absolute inset-x-[-5%] top-[-8%] bottom-[-12%] rounded-[2rem] bg-black/50 blur-xl" aria-hidden="true" />
               {/* Step 1 Title */}
               <h2
-                className="text-4xl sm:text-6xl md:text-7xl lg:text-[100pt] lg:whitespace-nowrap font-serif-display font-medium tracking-tight text-white mb-6 min-h-[1.2em] flex items-center justify-center"
+                className="flex min-h-[1.2em] items-center justify-center text-4xl font-serif-display font-medium tracking-tight text-white sm:text-6xl md:text-7xl lg:whitespace-nowrap lg:text-[100pt]"
                 style={{
                   opacity: hasTriggered ? 1 : 0,
                   transform: hasTriggered ? 'translateY(0)' : `translateY(${revealDistance}px)`,
@@ -200,7 +279,7 @@ export const DiggerSection: React.FC = () => {
 
               {/* Step 3 Description */}
               <p
-                className="text-lg sm:text-2xl font-serif-display text-neutral-300 tracking-wide font-light max-w-2xl lg:max-w-none lg:whitespace-nowrap min-h-[2.5em] leading-relaxed"
+                className="max-w-2xl min-h-[2.5em] text-lg font-serif-display font-light leading-relaxed tracking-wide text-neutral-300 sm:text-2xl lg:max-w-none lg:whitespace-nowrap"
                 style={{
                   opacity: descText.length > 0 ? 1 : 0,
                   transform: descText.length > 0 ? 'translateY(0)' : `translateY(${revealDistance * 0.65}px)`,
@@ -212,7 +291,7 @@ export const DiggerSection: React.FC = () => {
 
               {/* Step 4 CTA Button */}
               <div
-                className="mt-10 transition-all duration-700 ease-out"
+                className="transition-all duration-700 ease-out"
                 style={{
                   opacity: showCta ? 1 : 0,
                   transform: showCta ? 'translateY(0)' : 'translateY(8px)',
@@ -221,13 +300,37 @@ export const DiggerSection: React.FC = () => {
                 }}
               >
                 <button
+                  ref={ctaRef}
                   type="button"
                   aria-haspopup="dialog"
                   aria-expanded={isAboutPopupOpen}
                   onClick={openAboutPopup}
-                  className="px-7 py-2.5 text-xs font-semibold uppercase tracking-[0.2em] rounded-full border border-neutral-700 bg-neutral-900/80 hover:bg-[#7B00FF] text-white hover:border-[#A855F7] transition-all duration-300 backdrop-blur-sm transform hover:scale-105 active:scale-95 shadow-xl shadow-black/50"
+                  onMouseMove={(event) => {
+                    const rect = event.currentTarget.getBoundingClientRect();
+                    const centeredX = event.clientX - (rect.left + rect.width / 2);
+                    const centeredY = event.clientY - (rect.top + rect.height / 2);
+                    const maxDistance = Math.max(rect.width, rect.height) * 0.7;
+                    const distanceRatio = Math.min(1, Math.hypot(centeredX, centeredY) / maxDistance);
+                    const x = centeredX * (0.55 + distanceRatio * 0.7);
+                    const y = centeredY * (0.55 + distanceRatio * 0.7);
+                    setCtaPointer({ x, y });
+                  }}
+                  onMouseLeave={() => setCtaPointer({ x: 0, y: 0 })}
+                  className="group relative overflow-hidden rounded-full border border-neutral-700 bg-neutral-900/80 px-7 py-2.5 text-xs font-semibold uppercase tracking-[0.2em] text-white shadow-xl shadow-black/50 backdrop-blur-sm transition-all duration-300 hover:border-[#A855F7] hover:bg-[#7B00FF] active:scale-95"
+                  style={{
+                    transform: `translate(${ctaPointer.x}px, ${ctaPointer.y}px) scale(1.08)`,
+                    transition: 'transform 220ms cubic-bezier(0.22, 1, 0.36, 1), border-color 180ms ease, background-color 180ms ease'
+                  }}
                 >
-                  Take a closer look
+                  <span className="relative z-10 inline-flex items-center gap-3">
+                    <span>Take a closer look</span>
+                    <span
+                      className="inline-flex h-6 w-6 items-center justify-center rounded-full border border-white/15 bg-white/5 text-[14px] text-[#F4D6FF] transition-transform duration-200 group-hover:translate-x-1 group-hover:scale-110"
+                      aria-hidden="true"
+                    >
+                      →
+                    </span>
+                  </span>
                 </button>
               </div>
             </div>

@@ -60,9 +60,9 @@ export const FeaturedSection: React.FC<FeaturedSectionProps> = ({ onSelectProjec
     <section
       id="featured"
       ref={sectionRef}
-      className="relative min-h-[100svh] w-full overflow-x-clip bg-black select-none xl:h-[160svh] xl:min-h-0 motion-reduce:xl:h-auto motion-reduce:xl:min-h-[100svh]"
+      className="relative min-h-[100svh] w-full overflow-x-clip bg-black select-none motion-reduce:xl:min-h-[100svh]"
     >
-      <div className="relative min-h-[100svh] overflow-hidden py-48 md:py-72 xl:sticky xl:top-0 xl:h-[100svh] xl:min-h-0 xl:py-0 motion-reduce:xl:static motion-reduce:xl:h-auto motion-reduce:xl:min-h-[100svh] motion-reduce:xl:py-96">
+      <div className="relative min-h-[100svh] overflow-hidden py-48 md:py-72 xl:h-[100svh] xl:min-h-0 xl:py-0 motion-reduce:xl:h-auto motion-reduce:xl:min-h-[100svh] motion-reduce:xl:py-96">
         <div className="portfolio-grid relative z-10 xl:h-full xl:content-center motion-reduce:xl:h-auto">
         {/* Section Title */}
         <ViewportReveal
