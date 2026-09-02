@@ -3,6 +3,8 @@ import './DiggingIntro.css';
 
 type IntroPhase = 'active' | 'fading' | 'done';
 
+const INTRO_SESSION_KEY = 'digging-intro-seen';
+
 type DiggingIntroModule = {
   startDiggingIntro: (options?: { onComplete?: () => void }) => () => void;
 };
@@ -15,10 +17,11 @@ export function DiggingIntro() {
     if (typeof window === 'undefined') return;
 
     const forced = new URLSearchParams(window.location.search).get('intro') === '1';
-    const hasSeenIntro = window.localStorage.getItem('digging-intro-seen') === 'true';
+    const hasSeenIntro = window.sessionStorage.getItem(INTRO_SESSION_KEY) === 'true';
+    const nextShouldShow = forced || !hasSeenIntro;
 
-    setShouldShow(forced || !hasSeenIntro);
-    setPhase(forced || !hasSeenIntro ? 'active' : 'done');
+    setShouldShow(nextShouldShow);
+    setPhase(nextShouldShow ? 'active' : 'done');
   }, []);
 
   useEffect(() => {
@@ -35,7 +38,7 @@ export function DiggingIntro() {
     const completeIntro = () => {
       if (disposed || fadeTimer !== undefined) return;
       if (typeof window !== 'undefined') {
-        window.localStorage.setItem('digging-intro-seen', 'true');
+        window.sessionStorage.setItem(INTRO_SESSION_KEY, 'true');
       }
       if (completionTimer !== undefined) window.clearTimeout(completionTimer);
       fadeTimer = window.setTimeout(() => {
