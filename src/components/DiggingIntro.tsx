@@ -8,16 +8,18 @@ type DiggingIntroModule = {
 };
 
 export function DiggingIntro() {
-  const [shouldShow] = useState(() => {
-    if (typeof window === 'undefined') return true;
+  const [shouldShow, setShouldShow] = useState(false);
+  const [phase, setPhase] = useState<IntroPhase>('done');
 
+  useEffect(() => {
+    if (typeof window === 'undefined') return;
+
+    const forced = new URLSearchParams(window.location.search).get('intro') === '1';
     const hasSeenIntro = window.localStorage.getItem('digging-intro-seen') === 'true';
-    if (hasSeenIntro) return false;
 
-    window.localStorage.setItem('digging-intro-seen', 'true');
-    return true;
-  });
-  const [phase, setPhase] = useState<IntroPhase>(shouldShow ? 'active' : 'done');
+    setShouldShow(forced || !hasSeenIntro);
+    setPhase(forced || !hasSeenIntro ? 'active' : 'done');
+  }, []);
 
   useEffect(() => {
     if (!shouldShow) return undefined;
@@ -32,6 +34,9 @@ export function DiggingIntro() {
 
     const completeIntro = () => {
       if (disposed || fadeTimer !== undefined) return;
+      if (typeof window !== 'undefined') {
+        window.localStorage.setItem('digging-intro-seen', 'true');
+      }
       if (completionTimer !== undefined) window.clearTimeout(completionTimer);
       fadeTimer = window.setTimeout(() => {
         setPhase('fading');
