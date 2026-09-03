@@ -59,7 +59,7 @@ export const ArchiveSection: React.FC = () => {
 
         {/* Vertical Columns with Opposing Seamless Loops */}
         <ViewportReveal
-          className="archive-fade-mask col-span-full grid h-[720px] grid-cols-2 gap-4 overflow-hidden md:grid-cols-3 md:gap-6 lg:grid-cols-4 xl:h-[900px] xl:grid-cols-12 xl:gap-10"
+          className="archive-fade-mask col-span-full grid h-[720px] grid-cols-2 gap-4 overflow-hidden md:grid-cols-2 md:gap-6 xl:h-[900px] xl:grid-cols-12 xl:gap-10"
           distance={{ mobile: 110, desktop: 210 }}
           delay={0.16}
           progressOffset={[0, 0.96]}

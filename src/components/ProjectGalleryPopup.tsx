@@ -184,7 +184,7 @@ export const ProjectGalleryPopup: React.FC<ProjectGalleryPopupProps> = ({
         className="project-gallery-panel relative h-[100svh] w-full max-w-[1180px] overflow-y-auto overscroll-contain bg-[#080808] text-white shadow-[0_24px_100px_rgba(0,0,0,0.82)] sm:h-auto sm:max-h-[94svh] sm:rounded-2xl sm:border sm:border-white/10"
         onMouseDown={(event) => event.stopPropagation()}
       >
-        <header className="relative z-20 flex items-center justify-between gap-5 border-b border-white/10 bg-black/80 px-5 py-4 backdrop-blur-xl sm:px-8 sm:py-5">
+        <header className="sticky top-0 z-20 flex items-center justify-between gap-5 border-b border-white/10 bg-black/80 px-5 py-4 backdrop-blur-xl sm:px-8 sm:py-5">
           <div className="flex min-w-0 items-baseline gap-3 sm:gap-4">
             <h2
               id="projects-gallery-title"

@@ -152,7 +152,7 @@ export const ProjectLayerPopup: React.FC<ProjectLayerPopupProps> = ({
         className="project-popup-panel relative z-10 h-[100svh] w-full max-w-[1180px] overflow-y-auto overscroll-contain bg-[#080808] text-white shadow-[0_24px_100px_rgba(0,0,0,0.82)] sm:h-auto sm:max-h-[94svh] sm:rounded-2xl sm:border sm:border-white/10"
         onMouseDown={(event) => event.stopPropagation()}
       >
-        <header className="relative z-40 flex items-center justify-between gap-4 border-b border-white/10 bg-black/80 px-5 py-3 backdrop-blur-xl sm:px-8">
+        <header className="sticky top-0 z-40 flex items-center justify-between gap-4 border-b border-white/10 bg-black/80 px-5 py-3 backdrop-blur-xl sm:px-8">
           <div className="flex min-w-0 items-center gap-3">
             <span className="text-[10px] font-semibold uppercase tracking-[0.24em] text-neutral-500">
               Project

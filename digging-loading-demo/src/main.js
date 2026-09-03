@@ -43,7 +43,7 @@ let introComplete = false;
 let animationRunning = false;
 const dotStates = ['', '.', '..', '...'];
 
-const LOADING_DURATION = 8000;
+const LOADING_DURATION = 15000;
 
 const config = {
   startDepth: 0,

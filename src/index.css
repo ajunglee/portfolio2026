@@ -305,7 +305,7 @@
   }
 }
 
-@media (min-width: 80rem) and (prefers-reduced-motion: no-preference) {
+@media (min-width: 48rem) and (prefers-reduced-motion: no-preference) {
   .projects-marquee-viewport {
     width: 100vw;
     max-width: none;
@@ -693,6 +693,33 @@
   .animate-loop-down {
     animation: none !important;
     transform: none !important;
+  }
+}
+
+@media (min-width: 64rem) and (prefers-reduced-motion: no-preference) {
+  html {
+    scroll-snap-type: y proximity;
+    scroll-padding-top: 88px;
+  }
+
+  section[id]:not(#contact) {
+    scroll-snap-align: start;
+    scroll-snap-stop: normal;
+  }
+}
+
+.about-popup-panel [data-about-section='hero'],
+.about-popup-panel [data-about-section='middle-visual'] {
+  position: sticky;
+  top: 0;
+  z-index: 1;
+}
+
+@media (min-width: 64rem) {
+  #projects > div {
+    position: sticky;
+    top: 0;
+    z-index: 1;
   }
 }
 

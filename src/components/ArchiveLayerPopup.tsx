@@ -71,15 +71,17 @@ const ArchiveLayerPopup: React.FC<ArchiveLayerPopupProps> = ({ item, onClose }) 
         className="archive-popup-panel relative z-10 max-h-[92svh] w-full max-w-3xl overflow-y-auto overscroll-contain rounded-2xl bg-[#070707] text-white shadow-[0_28px_100px_rgba(0,0,0,0.82)]"
         onMouseDown={(event) => event.stopPropagation()}
       >
-        <button
-          ref={closeButtonRef}
-          type="button"
-          onClick={onClose}
-          aria-label="Close archive detail"
-          className="absolute right-4 top-4 z-30 flex size-11 cursor-pointer items-center justify-center rounded-full bg-black/60 text-white shadow-lg backdrop-blur-md transition-colors hover:bg-white/20 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-white sm:right-5 sm:top-5"
-        >
-          <X className="size-5" aria-hidden="true" />
-        </button>
+        <div className="sticky top-4 z-30 -mb-11 ml-auto mr-4 flex size-11 sm:mr-5">
+          <button
+            ref={closeButtonRef}
+            type="button"
+            onClick={onClose}
+            aria-label="Close archive detail"
+            className="flex size-11 cursor-pointer items-center justify-center rounded-full bg-black/60 text-white shadow-lg backdrop-blur-md transition-colors hover:bg-white/20 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-white"
+          >
+            <X className="size-5" aria-hidden="true" />
+          </button>
+        </div>
 
         <div className="relative aspect-square w-full overflow-hidden bg-black">
           {item.image ? (
