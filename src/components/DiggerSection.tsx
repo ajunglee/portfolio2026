@@ -20,7 +20,6 @@ export const DiggerSection: React.FC = () => {
   const [showCursor, setShowCursor] = useState(false);
   const [showCta, setShowCta] = useState(false);
   const [showBackground, setShowBackground] = useState(false);
-  const [isScrollHold, setIsScrollHold] = useState(false);
   const [ctaPointer, setCtaPointer] = useState({ x: 0, y: 0 });
   const ctaRef = useRef<HTMLButtonElement | null>(null);
 
@@ -83,43 +82,6 @@ export const DiggerSection: React.FC = () => {
       mobileQuery.removeEventListener('change', syncPreferences);
       reducedMotionQuery.removeEventListener('change', syncPreferences);
       window.removeEventListener('mousemove', handlePointerMove);
-    };
-  }, []);
-
-  useEffect(() => {
-    let lastScrollY = window.scrollY;
-    let holdTimeout: number | undefined;
-
-    const handleScroll = () => {
-      const currentY = window.scrollY;
-      const section = sectionRef.current;
-      const isScrollingDown = currentY > lastScrollY;
-
-      if (!section) {
-        lastScrollY = currentY;
-        return;
-      }
-
-      const rect = section.getBoundingClientRect();
-      const isInView = rect.top <= window.innerHeight * 0.8 && rect.bottom >= 0;
-
-      if (isScrollingDown && isInView) {
-        setIsScrollHold(true);
-        if (holdTimeout) window.clearTimeout(holdTimeout);
-        holdTimeout = window.setTimeout(() => setIsScrollHold(false), 420);
-      } else {
-        setIsScrollHold(false);
-      }
-
-      lastScrollY = currentY;
-    };
-
-    window.addEventListener('scroll', handleScroll, { passive: true });
-    handleScroll();
-
-    return () => {
-      window.removeEventListener('scroll', handleScroll);
-      if (holdTimeout) window.clearTimeout(holdTimeout);
     };
   }, []);
 
@@ -224,11 +186,6 @@ export const DiggerSection: React.FC = () => {
         <div
           ref={sectionRef}
           className="relative flex min-h-[100svh] w-full flex-col items-center justify-center overflow-hidden bg-black py-48 md:min-h-[120svh] md:py-72 lg:h-[100svh] lg:min-h-0 lg:py-0 transition-[position] duration-200 motion-reduce:lg:h-auto motion-reduce:lg:min-h-[120svh] motion-reduce:lg:py-96"
-          style={
-            isScrollHold
-              ? { position: 'sticky', top: 0, zIndex: 1, transform: 'translateZ(0)', boxShadow: '0 0 0 1px rgba(255,255,255,0.04)' }
-              : { position: 'relative' }
-          }
         >
         {/* Background Person Video / Canvas with Parallax */}
         <div

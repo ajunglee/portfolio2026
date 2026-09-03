@@ -61,7 +61,7 @@ export function DiggingIntro() {
       });
     };
 
-    completionTimer = window.setTimeout(completeIntro, 15050);
+    completionTimer = window.setTimeout(completeIntro, 8050);
     void mountDemo();
 
     return () => {

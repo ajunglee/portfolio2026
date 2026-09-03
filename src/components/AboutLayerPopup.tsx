@@ -478,7 +478,7 @@ const AboutLayerPopup: React.FC<AboutLayerPopupProps> = ({ isOpen, onClose }) =>
         className="about-popup-panel relative z-10 h-[100svh] w-full max-w-[960px] overflow-y-auto overscroll-contain bg-black text-white shadow-[0_24px_100px_rgba(0,0,0,0.72)] sm:h-auto sm:max-h-[94svh] sm:rounded-2xl sm:border sm:border-white/10"
         onMouseDown={(event) => event.stopPropagation()}
       >
-        <header className="sticky top-0 z-50 flex items-center justify-between border-b border-white/10 bg-black/72 px-5 py-3 backdrop-blur-xl sm:px-8">
+        <header className="relative z-50 flex items-center justify-between border-b border-white/10 bg-black/72 px-5 py-3 backdrop-blur-xl sm:px-8">
           <span className="text-[11px] uppercase tracking-[0.22em] text-[#C084FC]">About</span>
           <button
             ref={closeButtonRef}
