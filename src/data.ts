@@ -9,6 +9,8 @@ const PROJECT_PREVIEW_URLS = [
   new URL('./images/project_img6.webp', import.meta.url).href,
   new URL('./images/project_img7.webp', import.meta.url).href,
   new URL('./images/project_img8.webp', import.meta.url).href,
+  new URL('./images/project_img9.png', import.meta.url).href,
+  new URL('./images/project_img10.png', import.meta.url).href,
 ] as const;
 const PROJECT_BTOB_FULLPAGE_URL = new URL(
   './images/project_con_btob.jpg',
@@ -88,6 +90,14 @@ const PROJECT_SANGROK_TABLET_URL = new URL(
 ).href;
 const PROJECT_SANGROK_MOBILE_URL = new URL(
   './images/project_con_sangrok_m.webp',
+  import.meta.url,
+).href;
+const PROJECT_CATALOG_FULLPAGE_URL = new URL(
+  './images/project_con9.jpg',
+  import.meta.url,
+).href;
+const PROJECT_USER_GUIDE_FULLPAGE_URL = new URL(
+  './images/project_con10.jpg',
   import.meta.url,
 ).href;
 const ARCHIVE_FASHION_URLS = [
@@ -352,6 +362,36 @@ export const SCATTER_PROJECTS: ScatterProject[] = [
       { name: 'Main', hex: '#E63927' },
       { name: 'Sub', hex: '#1E2124' },
     ],
+  },
+  {
+    id: 'proj-9',
+    previewImage: PROJECT_PREVIEW_URLS[8],
+    mockupImage: PROJECT_CATALOG_FULLPAGE_URL,
+    title: '무한상상실 영업용 카탈로그',
+    subtitle: '무한상상실 영업용 카탈로그 디자인',
+    tags: ['Catalog', 'Graphic Design'],
+    gradient: 'from-cyan-950/90 via-teal-950/70 to-black',
+    description: '무한상상실 영업용 카탈로그 디자인 프로젝트입니다.',
+    client: null,
+    year: '2019',
+    schedule: '2019년',
+    contribution: { planning: null, design: null },
+    colors: [],
+  },
+  {
+    id: 'proj-10',
+    previewImage: PROJECT_PREVIEW_URLS[9],
+    mockupImage: PROJECT_USER_GUIDE_FULLPAGE_URL,
+    title: '사용자 안내서',
+    subtitle: '사용자 안내서 디자인',
+    tags: ['User Guide', 'Editorial Design'],
+    gradient: 'from-emerald-950/90 via-green-950/70 to-black',
+    description: '사용자 안내서 디자인 프로젝트입니다.',
+    client: null,
+    year: '2019',
+    schedule: '2019년',
+    contribution: { planning: null, design: null },
+    colors: [],
   }
 ].sort((projectA, projectB) => Number(projectB.year) - Number(projectA.year));
 

@@ -1,5 +1,5 @@
-import React, { useEffect, useRef } from 'react';
-import { ChevronLeft, ChevronRight, X } from 'lucide-react';
+import React, { useEffect, useRef, useState } from 'react';
+import { ChevronLeft, ChevronRight, ZoomIn, X } from 'lucide-react';
 
 import { ScatterProject } from '../types';
 
@@ -20,10 +20,18 @@ export const ProjectLayerPopup: React.FC<ProjectLayerPopupProps> = ({
 }) => {
   const dialogRef = useRef<HTMLDivElement>(null);
   const closeButtonRef = useRef<HTMLButtonElement>(null);
+  const zoomCloseButtonRef = useRef<HTMLButtonElement>(null);
   const onCloseRef = useRef(onClose);
   const onNavigateRef = useRef(onNavigate);
+  const isImageZoomOpenRef = useRef(false);
+  const [isImageZoomOpen, setIsImageZoomOpen] = useState(false);
   const projectId = project?.id;
   const isOpen = Boolean(project);
+
+  const closeImageZoom = () => {
+    isImageZoomOpenRef.current = false;
+    setIsImageZoomOpen(false);
+  };
 
   useEffect(() => {
     onCloseRef.current = onClose;
@@ -42,7 +50,19 @@ export const ProjectLayerPopup: React.FC<ProjectLayerPopupProps> = ({
     const handleKeyDown = (event: KeyboardEvent) => {
       if (event.key === 'Escape') {
         event.preventDefault();
+        if (isImageZoomOpenRef.current) {
+          closeImageZoom();
+          return;
+        }
         onCloseRef.current();
+        return;
+      }
+
+      if (isImageZoomOpenRef.current) {
+        if (event.key === 'Tab') {
+          event.preventDefault();
+          zoomCloseButtonRef.current?.focus();
+        }
         return;
       }
 
@@ -91,6 +111,24 @@ export const ProjectLayerPopup: React.FC<ProjectLayerPopupProps> = ({
   }, [isOpen]);
 
   useEffect(() => {
+    if (!isImageZoomOpen) return;
+
+    zoomCloseButtonRef.current?.focus();
+    return () => {
+      if (dialogRef.current?.contains(document.activeElement)) {
+        const zoomTrigger = dialogRef.current.querySelector<HTMLButtonElement>(
+          '[data-image-zoom-trigger="true"]',
+        );
+        zoomTrigger?.focus();
+      }
+    };
+  }, [isImageZoomOpen]);
+
+  useEffect(() => {
+    closeImageZoom();
+  }, [projectId]);
+
+  useEffect(() => {
     if (!projectId) return;
 
     const scrollFrame = window.requestAnimationFrame(() => {
@@ -122,6 +160,7 @@ export const ProjectLayerPopup: React.FC<ProjectLayerPopupProps> = ({
   const hasHoverMockupSet = Boolean(mockupHoverImage && mockupMobileImage);
   const hasSitemapMockupSet = Boolean(mockupSitemapImage && mockupMobileImage);
   const hasSideBySideMockupSet = Boolean(mockupSecondaryImage);
+  const isImageOnlyProject = project.id === 'proj-9' || project.id === 'proj-10';
   const mockupGridClass = hasHoverMockupSet || hasSitemapMockupSet
     ? 'md:grid-cols-[minmax(0,2.2fr)_minmax(220px,0.8fr)] md:items-start md:gap-6 lg:gap-8'
     : hasIntroMockupSet || hasResponsiveMockupSet || hasSideBySideMockupSet
@@ -147,7 +186,7 @@ export const ProjectLayerPopup: React.FC<ProjectLayerPopupProps> = ({
         role="dialog"
         aria-modal="true"
         aria-labelledby={titleId}
-        aria-describedby={descriptionId}
+        aria-describedby={isImageOnlyProject ? undefined : descriptionId}
         lang="ko"
         className="project-popup-panel relative z-10 h-[100svh] w-full max-w-[1180px] overflow-y-auto overscroll-contain bg-[#080808] text-white shadow-[0_24px_100px_rgba(0,0,0,0.82)] sm:h-auto sm:max-h-[94svh] sm:rounded-2xl sm:border sm:border-white/10"
         onMouseDown={(event) => event.stopPropagation()}
@@ -194,6 +233,41 @@ export const ProjectLayerPopup: React.FC<ProjectLayerPopupProps> = ({
         </header>
 
         <main>
+          {isImageOnlyProject ? (
+            <section className="px-5 pb-10 pt-8 sm:px-10 sm:pb-14 sm:pt-10 lg:px-16">
+              <h2
+                id={titleId}
+                className="mb-8 text-3xl font-medium leading-tight text-white sm:mb-10 sm:text-5xl"
+              >
+                {project.title}
+              </h2>
+              {mockupImage && (
+                <button
+                  type="button"
+                  data-image-zoom-trigger="true"
+                  aria-label={`${project.title} 이미지 확대 보기`}
+                  onClick={() => {
+                    isImageZoomOpenRef.current = true;
+                    setIsImageZoomOpen(true);
+                  }}
+                  className="group relative mx-auto block w-full max-w-5xl cursor-zoom-in text-left focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-white"
+                >
+                  <img
+                    src={mockupImage}
+                    alt={project.title}
+                    className="block h-auto w-full"
+                    loading="eager"
+                    decoding="async"
+                    draggable={false}
+                  />
+                  <span className="pointer-events-none absolute right-4 top-4 flex size-11 items-center justify-center rounded-full bg-black/70 text-white opacity-0 shadow-lg transition-opacity group-hover:opacity-100 group-focus-visible:opacity-100">
+                    <ZoomIn className="size-5" aria-hidden="true" />
+                  </span>
+                </button>
+              )}
+            </section>
+          ) : (
+            <>
           <section className="grid gap-10 px-5 pb-14 pt-8 sm:px-10 sm:pb-20 sm:pt-12 md:grid-cols-[minmax(0,0.9fr)_minmax(0,1.1fr)] md:items-center md:gap-8 lg:gap-14 lg:px-16 lg:pb-24 lg:pt-16">
             <div className="min-w-0">
               <h2
@@ -486,7 +560,44 @@ export const ProjectLayerPopup: React.FC<ProjectLayerPopupProps> = ({
               </div>
             </section>
           )}
+            </>
+          )}
         </main>
+
+        {isImageZoomOpen && mockupImage && (
+          <div
+            className="fixed inset-0 z-[120] overflow-auto bg-black/95 p-4 backdrop-blur-sm sm:p-8"
+            role="presentation"
+            onMouseDown={(event) => {
+              if (event.target === event.currentTarget) closeImageZoom();
+            }}
+          >
+            <div
+              role="dialog"
+              aria-modal="true"
+              aria-label={`${project.title} 확대 이미지`}
+              className="relative mx-auto flex min-h-full w-full max-w-[1600px] flex-col items-center gap-4"
+            >
+              <button
+                ref={zoomCloseButtonRef}
+                type="button"
+                onClick={closeImageZoom}
+                aria-label="확대 이미지 닫기"
+                className="sticky top-0 z-10 ml-auto flex size-11 shrink-0 items-center justify-center rounded-full border border-white/20 bg-black/80 text-white transition-colors hover:bg-white/15 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-white"
+              >
+                <X className="size-5" aria-hidden="true" />
+              </button>
+              <img
+                src={mockupImage}
+                alt={project.title}
+                className="h-auto w-auto max-w-[96vw]"
+                loading="eager"
+                decoding="async"
+                draggable={false}
+              />
+            </div>
+          </div>
+        )}
 
         <footer className="flex items-center justify-between border-t border-white/10 px-5 py-6 sm:px-8">
           <button
